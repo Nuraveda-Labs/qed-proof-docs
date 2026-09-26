@@ -1,0 +1,29 @@
+---
+title: Introduction
+description: The QED Proof API — submit claims, read claim status and receipts, and fetch the issuer's public keys.
+---
+
+The API lives at `https://api.qedproof.site`. It's a small, deliberately narrow surface:
+
+| Method | Path | Auth | Purpose |
+|---|---|---|---|
+| `POST` | `/v1/claims` | API key | Submit a claim |
+| `GET` | `/v1/claims/{claim_id}` | API key | Read a claim's status |
+| `GET` | `/v1/receipts/{receipt_id}` | None | Fetch a signed receipt |
+| `GET` | `/.well-known/poaw-keys.json` | None | The issuer's public keys, for checking receipts |
+
+Requests and responses are JSON. See [authentication](/api-reference/authentication) for how to get and use an API
+key, and [errors](/api-reference/errors) for how failures are reported.
+
+Receipt reads need no API key by design — a receipt is meant to be shared and checked by anyone, including someone
+who was never given a key.
+
+## Rate limits
+
+Claim submission and claim-status reads are limited per API key. Receipt reads are limited per IP address instead,
+since they need no key. Exceeding either limit returns `429` with a `Retry-After` header.
+
+## Request size
+
+The request body is capped; a request over the limit is rejected with `413` before it's parsed. Claim `params` is
+separately capped at 4096 bytes of JSON — see [claims](/concepts/claims).

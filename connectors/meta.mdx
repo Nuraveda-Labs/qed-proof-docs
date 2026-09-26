@@ -1,0 +1,46 @@
+---
+title: Facebook Pages, Instagram, Meta Ads
+description: Connect Facebook Pages, Instagram and Meta Ads read-only today. Verification for these connectors isn't built yet.
+---
+
+Facebook Pages, Instagram and Meta Ads can each be connected read-only from the app today. None of them has a
+verifier yet, so a claim targeting one of these destinations can't be decided until that ships.
+
+<Warning>
+These connectors are for connecting your accounts now, ahead of verification. No `meta.*` claim can be verified yet.
+</Warning>
+
+## Facebook Pages
+
+Verify posts your agents publish to your Pages.
+
+- **Access:** reads posts on the Pages you pick. Never posts, edits or deletes.
+
+| Scope | What it's for |
+|---|---|
+| `pages_show_list` | List your Pages |
+| `pages_read_engagement` | Read Page posts |
+| `business_management` | Reach business-owned Pages |
+
+## Instagram
+
+Verify posts your agents publish to Instagram.
+
+- **Access:** reads media on the accounts you pick. Never posts, edits or deletes.
+
+| Scope | What it's for |
+|---|---|
+| `instagram_basic` | Read media |
+| `pages_show_list`, `pages_read_engagement` | The linked Page |
+| `business_management` | Business assets |
+
+## Meta Ads
+
+Verify ad changes your agents make, like budget edits.
+
+- **Access:** reads ad account activity and settings. Never changes ads or spend.
+
+| Scope | What it's for |
+|---|---|
+| `ads_read` | Activity log and budgets |
+| `business_management` | Business-owned ad accounts |

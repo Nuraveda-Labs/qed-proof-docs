@@ -1,0 +1,49 @@
+---
+title: Anchoring
+description: How the Merkle log's root is committed on a public chain, so it can't be backdated or silently rewritten.
+---
+
+<Note>
+  Anchoring runs on **Base Sepolia**, a testnet, today. Base mainnet anchoring is not switched on yet.
+</Note>
+
+An anchor is a public, timestamped commitment to a log root. Its job is to make the log's history provable to
+someone who doesn't trust QED Proof's servers at all: once a root is anchored, receipts under it can't be
+backdated, quietly edited, or deleted without the tampering being detectable.
+
+## How it works
+
+QED Proof anchors log roots as attestations through the **Ethereum Attestation Service (EAS)** on Base. EAS is a
+predeployed public contract with its own schema registry and explorer — QED Proof writes no custom contract for
+this. The attestation's data decodes, under QED Proof's published schema, to the log's identifier, the tree size,
+and the root hash at that size.
+
+A receipt's `proof.anchor` looks like:
+
+```json
+"anchor": { "chain": "eip155:84532", "scheme": "eas", "uid": "0x...", "tx_hash": "0x...", "tree_size": 88240 }
+```
+
+`chain` is a CAIP-2 chain identifier — `eip155:84532` for Base Sepolia, `eip155:8453` for Base mainnet.
+
+## Checking an anchor
+
+Given a receipt's `proof.anchor` and the issuer's `/.well-known/poaw-keys.json` (which publishes the attester
+addresses and schema IDs it considers valid), you can look up the EAS attestation directly on a public Base RPC and
+confirm:
+
+- the attestation came from an address the issuer actually publishes as one of its anchor attesters,
+- it was made under a schema the issuer publishes,
+- and it decodes to the `log_id`, `tree_size`, and `root_hash` the receipt claims (or, if the attested tree is
+  larger, that a valid consistency proof connects the two sizes).
+
+The attestation's block timestamp becomes the receipt's proven-by time — the point after which the receipt could not
+have been backdated. See [check a receipt](/concepts/check-a-receipt) for running this check yourself with the
+reference checker.
+
+## What an anchor gives you, and what it doesn't
+
+An anchor gets a receipt to **trust level 2** (see [trust levels](/concepts/trust-levels)): a checker can confirm
+the receipt existed no later than the anchor time, and that it can't be backdated or silently deleted. It does not,
+on its own, confirm what a hardware-attested or web-proven verifier build would (trust levels 3 and 4) — those are
+specified but not built.

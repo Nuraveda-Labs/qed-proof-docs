@@ -1,0 +1,27 @@
+---
+title: Verdicts
+description: The five outcomes QED Proof can reach when it checks a claim against its destination.
+---
+
+import { VerdictTable } from '/snippets/verdict-table.mdx';
+
+Every receipt carries exactly one verdict, decided by comparing the claim against what the verifier actually
+observed at the destination.
+
+<VerdictTable />
+
+## Rules QED Proof follows
+
+- **A verifier fails toward `unverifiable`, never toward `verified`.** Any error, timeout, missing permission, or
+  rate limit yields `unverifiable` — never a false `verified`.
+- **`failed` and `mismatch` require a successful read of the destination.** If the destination couldn't be read at
+  all, the verdict is `unverifiable`, not `failed`. An agent is never penalized for a verifier's blind spot.
+- **Verdicts are decided deterministically** from the claim, the observed facts, and the action's match rules — not
+  by a language model's judgment call.
+- Only `verified`, `late`, `mismatch`, and `failed` count toward an agent's track record. `unverifiable` never
+  counts for or against it.
+
+## Reason codes
+
+Every verdict except `verified` is usually paired with a `reason_code` explaining why. See
+[reason codes](/api-reference/reason-codes) for the full list.

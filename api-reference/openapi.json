@@ -1,0 +1,378 @@
+{
+  "components": {
+    "schemas": {
+      "ClaimIn": {
+        "description": "What an agent submits. Always untrusted (SPEC §2).",
+        "properties": {
+          "action": {
+            "pattern": "^[a-z0-9]+(\\.[a-z0-9_]+){2}$",
+            "title": "Action",
+            "type": "string"
+          },
+          "agent_id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Agent Id",
+            "type": "string"
+          },
+          "claimed_at": {
+            "format": "date-time",
+            "title": "Claimed At",
+            "type": "string"
+          },
+          "client_claim_id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Client Claim Id",
+            "type": "string"
+          },
+          "params": {
+            "additionalProperties": true,
+            "title": "Params",
+            "type": "object"
+          },
+          "target": {
+            "maxLength": 512,
+            "minLength": 1,
+            "title": "Target",
+            "type": "string"
+          }
+        },
+        "required": [
+          "client_claim_id",
+          "agent_id",
+          "action",
+          "target",
+          "claimed_at"
+        ],
+        "title": "ClaimIn",
+        "type": "object"
+      },
+      "Error": {
+        "properties": {
+          "detail": {
+            "description": "What went wrong, in plain words.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "detail"
+        ],
+        "title": "Error",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "apiKey": {
+        "description": "A workspace API key, created on the Developers screen.",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "The public HTTP API of QED Proof. Guides: https://docs.qedproof.site",
+    "title": "QED Proof API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/.well-known/poaw-keys.json": {
+      "get": {
+        "description": "The receipt-signing public keys, and the anchor attesters and schemas a checker must accept (SPEC §5.2, §8.4). Public by design.",
+        "operationId": "poaw_keys__well_known_poaw_keys_json_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Poaw Keys  Well Known Poaw Keys Json Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get the public keys"
+      }
+    },
+    "/v1/claims": {
+      "post": {
+        "description": "Tells QED Proof what an agent says it did. The claim is checked against the destination itself, inline when the destination answers quickly, otherwise by the next worker pass. Submitting the same `client_claim_id` again returns the existing claim (`created: false`) instead of a second one.",
+        "operationId": "submit_v1_claims_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClaimIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Submit V1 Claims Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Missing or invalid API key."
+          },
+          "402": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "The deployment refused a new claim (for example a workspace limit). Nothing was created."
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "The request body is too large."
+          },
+          "422": {
+            "description": "The claim or its `params` are invalid for this `action`."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Rate limit exceeded. Retry after the `Retry-After` header's seconds."
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "summary": "Submit a claim"
+      }
+    },
+    "/v1/claims/{claim_id}": {
+      "get": {
+        "description": "The claim's current status and, once decided, its verdict and receipt id.",
+        "operationId": "claim_status_v1_claims__claim_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "claim_id",
+            "required": true,
+            "schema": {
+              "title": "Claim Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Claim Status V1 Claims  Claim Id  Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Missing or invalid API key."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "No such claim in this workspace."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Rate limit exceeded."
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "summary": "Get a claim"
+      }
+    },
+    "/v1/receipts/{receipt_id}": {
+      "get": {
+        "description": "A signed receipt with its inclusion proof in the log (and the anchor, once the log root is anchored). Receipts are meant to be shared and checked by anyone, so this needs no API key. Reads are rate-limited per IP address.",
+        "operationId": "receipt_v1_receipts__receipt_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "receipt_id",
+            "required": true,
+            "schema": {
+              "title": "Receipt Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Receipt V1 Receipts  Receipt Id  Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "No such receipt."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Rate limit exceeded."
+          }
+        },
+        "summary": "Get a receipt"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.qedproof.site"
+    }
+  ]
+}

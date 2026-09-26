@@ -1,0 +1,38 @@
+---
+title: Alerts
+description: Send verdicts to a Discord webhook as they're decided.
+---
+
+Discord is the only alert channel today. There's no outbound customer webhook — if you want your own system notified,
+poll [the claim status](/api-reference/introduction) from the API.
+
+## Set it up
+
+<Steps>
+  <Step title="Get a Discord webhook URL">
+    In Discord, add a webhook to the channel you want alerts in. The URL looks like
+    `https://discord.com/api/webhooks/<id>/<token>`.
+  </Step>
+  <Step title="Add it on the Alerts screen">
+    In the app, open **Alerts** and paste the webhook URL in. QED Proof only accepts a URL in that exact Discord
+    webhook shape — anything else is rejected before it's saved. Once saved, the URL is shown back to you masked, not
+    in full.
+  </Step>
+  <Step title="Done">
+    Every channel you add receives every verdict decided for your workspace from then on.
+  </Step>
+</Steps>
+
+## What gets sent
+
+One message per verdict, in this shape:
+
+```
+**VERIFIED** `github.commit.push` → `owner/repo` (reason_code)  receipt: https://qedproof.site/r/<receipt_id>/
+```
+
+The verdict is uppercased, followed by the action and target you claimed, the reason code if there is one, and a
+link to the public receipt page for that verdict.
+
+If delivery to a channel fails, QED Proof retries the alert, up to five attempts in all. A channel that already
+received it isn't sent it twice: each retry goes only to the channels still waiting.

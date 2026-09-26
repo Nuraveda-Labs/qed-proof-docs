@@ -1,0 +1,42 @@
+---
+title: Self-hosting
+description: Run your own POAW node — the same code the hosted product runs on.
+---
+
+QED Proof's hosted service and a self-hosted node run the same code: claims API, verifiers, signing, the Merkle log,
+and anchoring. Self-hosting trades the console, managed GitHub App and cloud key management for full control of your
+own database and signing key.
+
+<CardGroup cols={2}>
+  <Card title="Docker Compose" icon="docker" href="/self-hosting/docker-compose">
+    The fastest way to run a node: PostgreSQL plus the node, in two containers.
+  </Card>
+  <Card title="The poaw-node CLI" icon="terminal" href="/self-hosting/cli">
+    Initialize the schema, generate a signing key, create a workspace, and run the API without Docker.
+  </Card>
+</CardGroup>
+
+## What you get
+
+| | Self-hosted | Hosted (qedproof.site) |
+|---|---|---|
+| Verification, receipts, log, anchoring | The same node code | The same node code |
+| Workspaces and API keys | CLI | Console, with team members and invites |
+| GitHub access | One token you provide | A GitHub App, per workspace, read-only |
+| Alerts | stdout log lines | Discord channels, delivery history |
+| Signing keys | A key file you hold | Cloud key management |
+
+<Warning>
+The key that signs your receipts is generated on first start and lives in a file (or a Docker volume) you're
+responsible for. Back it up — every receipt your node ever issues verifies against that key's public half, forever.
+Lose the key and there's no way to reissue the same receipts under it.
+</Warning>
+
+## License
+
+The node ([`node/`](https://github.com/Nuraveda-Labs/POAW/tree/main/node)) is **AGPL-3.0-only**: run it freely, but a
+modified, hosted version of it must share its changes. The spec and `core-python` are **Apache-2.0**: embed them
+anywhere. See the repository's [`NOTICE`](https://github.com/Nuraveda-Labs/POAW/blob/main/NOTICE) for the full
+breakdown.
+
+Repository: **[github.com/Nuraveda-Labs/POAW](https://github.com/Nuraveda-Labs/POAW)**.

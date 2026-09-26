@@ -1,0 +1,32 @@
+---
+title: Trust levels
+description: What a checker can actually confirm about a receipt, from a signature alone up to a hardware- or web-proven observation.
+---
+
+import { NotBuilt } from '/snippets/not-built.mdx';
+
+Every receipt carries a `trust_level` from 1 to 4. It's the issuer's claim about which guarantees it provides — a
+checker should always compute the level it can actually confirm ("achieved" trust level) and report the lower of
+the two.
+
+| Level | Name | The issuer additionally provides | A checker can confirm |
+|---|---|---|---|
+| 1 | Signed | The Ed25519 signature over the receipt body | The issuer stated this, and it hasn't been altered |
+| 2 | Anchored | A Merkle inclusion proof and an on-chain anchor | ...and it existed no later than the anchor time. It can't be backdated or silently deleted |
+| 3 | Attested | An `attestation` plus the verifier's `code_hash` | ...and a specific, published verifier build produced the observation inside a hardware enclave |
+| 4 | Web-proven | A zero-knowledge TLS proof inside `attestation` | ...and the facts came from the destination's TLS session, without trusting hardware |
+
+## Status today
+
+- **Level 1 (Signed)** and **level 2 (Anchored)** are implemented. Anchoring currently runs on Base Sepolia — see
+  [anchoring](/concepts/anchoring).
+- **Levels 3 (Attested) and 4 (Web-proven)** are specified in the protocol but not implemented.
+
+<NotBuilt what="Trust levels 3 and 4" />
+
+## Why a checker recomputes the level
+
+`trust_level` in a receipt's body is only what the issuer claims. A checker that verifies a receipt should
+independently confirm inclusion and the anchor before reporting level 2, and should never present a higher level than
+what actually verified. This is why [checking a receipt yourself](/concepts/check-a-receipt) reports an "achieved"
+trust level alongside the verdict.

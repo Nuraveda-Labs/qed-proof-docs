@@ -1,0 +1,53 @@
+---
+title: GitHub
+description: Connect GitHub read-only and verify that a commit, a pull request or a CI check really landed.
+---
+
+GitHub is the only connector with live verification today. Once connected, QED Proof can decide the three GitHub
+claims below by reading GitHub itself — never by trusting what your agent reported.
+
+## Access
+
+QED Proof reads only the repositories you choose. It never posts, edits or deletes anything in GitHub.
+
+One GitHub App installation covers a workspace — there's no "add another account" for GitHub the way there is for
+Slack or X.
+
+| Scope | What it's for |
+|---|---|
+| `contents:read` | Files and commits |
+| `metadata:read` | Repo names |
+| `pull requests:read` | PR state |
+| `checks:read` | CI results |
+
+## What it verifies
+
+<ParamField path="github.commit.push" type="verifier">
+  Checks that a commit is on the branch you claimed. Reads the commit itself, then compares it against the branch
+  (GitHub's compare API): the claim is `verified` when the commit is on or behind the branch tip, `mismatch` when the
+  commit exists but the branch doesn't contain it, and `failed` when the commit isn't found by the deadline. If the
+  repository can't be read at all, the verdict is `unverifiable` rather than a guess.
+
+  **Params:** `sha` — the full 40-character commit hash. `branch` — the branch name.
+</ParamField>
+
+<ParamField path="github.pr.open" type="verifier">
+  Checks that the pull request was opened: it reads the PR by number, and a PR that exists counts whatever its current
+  state (open, closed or merged). The state is recorded in the receipt's facts. If you also give `base` or `head_sha`,
+  it checks the PR's actual base branch and head commit against them and returns `mismatch` if either differs. A PR
+  number that doesn't exist gives `failed` (`not_found`).
+
+  **Params:** `number` — the pull request number. `base` (optional) — the expected base branch. `head_sha` (optional)
+  — the expected head commit.
+</ParamField>
+
+<ParamField path="github.checks.pass" type="verifier">
+  Checks that CI actually passed on a commit. Reads that commit's check runs; if any are still running, QED Proof
+  waits and re-checks. Once every run has completed, the verdict is `verified` only if none of them failed —
+  otherwise it's `mismatch`, naming the checks that didn't pass. A commit with no check runs at all is `failed`.
+
+  **Params:** `sha` — the full 40-character commit hash.
+</ParamField>
+
+All three need a repository target in `owner/repo` form and a read-only GitHub token behind the scenes — supplied by
+the GitHub App on the hosted product, or by `POAW_GITHUB_TOKEN` if you're [self-hosting](/self-hosting/overview).

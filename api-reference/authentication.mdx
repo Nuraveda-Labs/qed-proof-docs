@@ -1,0 +1,37 @@
+---
+title: Authentication
+description: How QED Proof API keys work, and which endpoints need one.
+---
+
+Most of the API is authenticated with a bearer API key:
+
+```bash
+curl https://api.qedproof.site/v1/claims \
+  -H "Authorization: Bearer <your key>" \
+  ...
+```
+
+## Creating a key
+
+API keys are created on the **Developers** screen at
+[qedproof.site/app/developers](https://qedproof.site/app/developers), by a workspace owner. A key:
+
+- starts with `qed_sk_`,
+- is shown to you exactly once, at creation — QED Proof stores only its hash, so it can't show it to you again,
+- belongs to one workspace, and every claim you submit with it is scoped to that workspace.
+
+Revoke a key from the same screen if it's compromised or no longer needed. A revoked key stops working immediately;
+it isn't deleted, so it stays visible for audit purposes.
+
+## What needs a key, and what doesn't
+
+`POST /v1/claims` and `GET /v1/claims/{claim_id}` require a valid, unrevoked key in the `Authorization` header.
+
+`GET /v1/receipts/{receipt_id}` and `GET /.well-known/poaw-keys.json` need no key at all. A receipt is designed to be
+checked by anyone holding its ID — including people you never gave a key to — so read access to receipts is public
+by design, rate-limited per requesting IP address instead.
+
+## A missing or invalid key
+
+A request to a key-protected endpoint without a valid `Authorization: Bearer <key>` header returns `401` with
+`{"detail": "invalid or missing API key"}`.

@@ -1,0 +1,48 @@
+---
+title: Docker Compose
+description: Run PostgreSQL and the node with one command.
+---
+
+## Start it
+
+```bash
+git clone https://github.com/Nuraveda-Labs/POAW.git && cd POAW
+docker compose up -d
+docker compose exec node poaw-node create-workspace --name "My team"
+```
+
+That last command prints an API key. **It's shown once** — store it now.
+
+The compose file publishes the node on `127.0.0.1:8080` only, not on your network. On first start the node generates
+its receipt-signing key and writes it into the `keys` volume.
+
+<Warning>
+Change `POSTGRES_PASSWORD` in `docker-compose.yml` before running this anywhere but your own machine. Back up the
+`keys` volume — receipts are verified against that key forever.
+</Warning>
+
+## Services
+
+`docker-compose.yml` defines two services:
+
+- **`db`** — PostgreSQL 16, with its data in the `db` volume.
+- **`node`** — built from the repo's `node/Dockerfile`, depends on `db` being healthy, and keeps its signing key in
+  the `keys` volume.
+
+## Environment variables
+
+The node container reads these from the compose file's `environment:` block (each falls back to the shown default if
+unset in your shell):
+
+| Variable | Default | What |
+|---|---|---|
+| `POAW_ISSUER_NAME` | `poaw-node` | Shown in receipts |
+| `POAW_GITHUB_TOKEN` | *(empty)* | A read-only GitHub token for the `github.*` verifiers — without it they return `unverifiable` |
+| `POAW_ANCHOR_CHAIN` | *(empty)* | e.g. `eip155:84532` to anchor the log on Base Sepolia (needs anchoring set up — see the [CLI page](/self-hosting/cli) for the rest of the anchoring variables) |
+
+`POAW_DATABASE_URL` is set for you in the compose file, pointing at the `db` service.
+
+## Next
+
+Create more workspaces at any time with the same `create-workspace` command, and see the [CLI page](/self-hosting/cli)
+for every other `poaw-node` subcommand and environment variable, including anchoring.

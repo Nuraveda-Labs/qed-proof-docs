@@ -1,0 +1,103 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "QED Proof",
+  "description": "Independent verification of AI agents' work: signed receipts, an append-only log, anchored on Base.",
+  "colors": {
+    "primary": "#5B21B6",
+    "light": "#C4A5FF",
+    "dark": "#4C1D95"
+  },
+  "fonts": {
+    "family": "Schibsted Grotesk"
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg",
+    "href": "https://qedproof.site"
+  },
+  "favicon": "/favicon.png",
+  "navbar": {
+    "links": [
+      { "label": "Open source (POAW)", "href": "https://github.com/Nuraveda-Labs/POAW" }
+    ],
+    "primary": { "type": "button", "label": "Open the app", "href": "https://qedproof.site/app" }
+  },
+  "contextual": {
+    "options": ["copy", "view", "claude", "chatgpt"]
+  },
+  "api": {
+    "openapi": "api-reference/openapi.json",
+    "playground": { "display": "simple" }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Guides",
+        "groups": [
+          { "group": "Get started", "pages": ["index", "quickstart"] },
+          {
+            "group": "Concepts",
+            "pages": [
+              "concepts/claims",
+              "concepts/verdicts",
+              "concepts/receipts",
+              "concepts/merkle-log",
+              "concepts/anchoring",
+              "concepts/trust-levels",
+              "concepts/check-a-receipt"
+            ]
+          },
+          {
+            "group": "Connectors",
+            "pages": [
+              "connectors/overview",
+              "connectors/github",
+              "connectors/http",
+              "connectors/meta",
+              "connectors/slack",
+              "connectors/x",
+              "connectors/coming-soon"
+            ]
+          },
+          { "group": "Build", "pages": ["clients", "alerts", "pipelines"] },
+          {
+            "group": "Self-hosting",
+            "pages": ["self-hosting/overview", "self-hosting/docker-compose", "self-hosting/cli"]
+          },
+          { "group": "Trust and safety", "pages": ["security"] }
+        ]
+      },
+      {
+        "tab": "API reference",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "api-reference/introduction",
+              "api-reference/authentication",
+              "api-reference/errors",
+              "api-reference/reason-codes"
+            ]
+          },
+          {
+            "group": "Endpoints",
+            "openapi": "api-reference/openapi.json",
+            "pages": [
+              "POST /v1/claims",
+              "GET /v1/claims/{claim_id}",
+              "GET /v1/receipts/{receipt_id}",
+              "GET /.well-known/poaw-keys.json"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/Nuraveda-Labs/POAW",
+      "discord": "https://discord.gg/9yhJs3EdCx"
+    }
+  }
+}

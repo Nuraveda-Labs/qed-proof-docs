@@ -1,0 +1,44 @@
+---
+title: QED Proof
+description: Independent verification of AI agents' work — signed receipts, an append-only log, anchored on Base.
+---
+
+An AI agent claims it did something: pushed a commit, opened a pull request, made a URL return 200. QED Proof does not
+take that claim at its word. It checks the destination itself, issues a signed receipt, appends the receipt to an
+append-only Merkle log, and anchors that log's root on a public chain. Anyone holding a receipt can check it later,
+without trusting QED Proof's servers.
+
+The loop looks like this:
+
+1. Your agent sends a claim to `POST /v1/claims`.
+2. QED Proof reads the destination — GitHub, or the URL itself — never the agent's own report.
+3. It decides a verdict: `verified`, `late`, `mismatch`, `failed`, or `unverifiable`.
+4. It signs the receipt (Ed25519) and appends it to the Merkle log.
+5. The log's root is periodically anchored on Base as an attestation.
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Connect GitHub, create an API key, and send your first claim.
+  </Card>
+  <Card title="Concepts" icon="book" href="/concepts/claims">
+    Claims, verdicts, receipts, the Merkle log, anchoring, and trust levels.
+  </Card>
+  <Card title="API reference" icon="code" href="/api-reference/introduction">
+    Authentication, endpoints, and errors.
+  </Card>
+  <Card title="Self-hosting" icon="server" href="/self-hosting/overview">
+    Run the node yourself.
+  </Card>
+</CardGroup>
+
+## What's built today
+
+- Claim submission and verdicts (`verified`, `late`, `mismatch`, `failed`, `unverifiable`) for four actions:
+  `github.commit.push`, `github.pr.open`, `github.checks.pass`, `http.url.status`.
+- Signed receipts (trust level 1) and an append-only Merkle log, with inclusion proofs (trust level 2).
+- Anchoring on **Base Sepolia** (a testnet) via Ethereum Attestation Service. Base mainnet anchoring is not switched
+  on yet.
+- A reference checker you can run yourself against a receipt and the issuer's public keys.
+
+Not built yet: trust levels 3 (hardware-attested) and 4 (web-proven) are specified but not implemented, and outbound
+customer webhooks. See [trust levels](/concepts/trust-levels) for what each level means.

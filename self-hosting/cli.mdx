@@ -1,0 +1,69 @@
+---
+title: The poaw-node CLI
+description: Run a POAW node without Docker — schema, keys, workspaces and the server, driven by poaw-node and environment variables.
+---
+
+`poaw-node` is configured by environment variables; `serve` also takes `--host` and `--port`. Install it with `pip install ./core-python
+"./node[anchor]"` from a clone of the repository (Python 3.11+, PostgreSQL 14+).
+
+## Commands
+
+<ParamField path="poaw-node init-db" type="command">
+  Applies the schema (`node/src/poaw_node/schema.sql`) to an empty database. Safe to re-run — it checks whether the
+  schema is already applied and does nothing if so. Requires `POAW_DATABASE_URL`.
+</ParamField>
+
+<ParamField path="poaw-node keygen <path>" type="command">
+  Writes a new 32-byte signing key to `<path>` (mode 600) and refuses to overwrite an existing file. Use this once
+  for `POAW_SIGNING_KEY_FILE`, and again for `POAW_ANCHOR_KEY_FILE` if you're anchoring.
+</ParamField>
+
+<ParamField path="poaw-node create-workspace --name <name> [--label <label>]" type="command">
+  Creates a workspace and prints its first API key. **The key is shown once** — it's stored only as a hash
+  (`sha256`), never in plain text, so there's no way to recover it later; run this again to create a new key if you
+  lose it. Self-hosted API keys start with `poaw_sk_`. `--label` defaults to `initial`.
+</ParamField>
+
+<ParamField path="poaw-node serve [--host 0.0.0.0] [--port 8080]" type="command">
+  Runs the claims API and a background tick that re-checks queued claims, on the given host and port (defaults shown).
+</ParamField>
+
+## Environment variables
+
+| Variable | Required | Default | What |
+|---|---|---|---|
+| `POAW_DATABASE_URL` | Yes | — | `postgresql://…` connection string |
+| `POAW_SIGNING_KEY_FILE` | Yes | — | File holding the 32-byte Ed25519 seed that signs receipts (`poaw-node keygen`) |
+| `POAW_ISSUER_NAME` | | `poaw-node` | Shown in receipts |
+| `POAW_LOG_NAME` | | `poaw-selfhost-log-v1` | Names this node's log; its `log_id` is the SHA-256 of this name |
+| `POAW_PUBLIC_BASE` | | — | The URL this node is reachable at, used in alert links |
+| `POAW_TICK_SECONDS` | | `30` | How often queued claims are re-checked |
+| `POAW_GITHUB_TOKEN` | | — | A read-only GitHub token for the `github.*` verifiers; without it, they return `unverifiable` |
+| `POAW_ANCHOR_CHAIN` | | — | e.g. `eip155:84532` to anchor the log on Base Sepolia — needs the node installed with the `anchor` extra |
+| `POAW_ANCHOR_KEY_FILE` | with anchoring | — | File holding the 32-byte secp256k1 key that pays for anchors (hex or raw) |
+| `POAW_ANCHOR_RPC` | | the public endpoint for the chain | The chain's JSON-RPC URL |
+| `POAW_ANCHOR_INTERVAL_S` | | — | How often the log is anchored |
+| `POAW_ANCHOR_DAILY_MAX_WEI` | | — | Daily spend cap for anchoring |
+| `POAW_ANCHOR_MIN_BALANCE_WEI` | | — | Minimum balance the anchoring key must keep |
+
+<Note>
+Anchoring only turns on when `POAW_ANCHOR_CHAIN` is set. Without it, the node still signs receipts and maintains the
+Merkle log — it just doesn't anchor the log's root on chain.
+</Note>
+
+## Send a claim and check a receipt
+
+```bash
+curl -X POST http://127.0.0.1:8080/v1/claims \
+  -H "Authorization: Bearer <your key>" -H "Content-Type: application/json" \
+  -d '{"client_claim_id": "deploy-1", "agent_id": "my-agent", "action": "http.url.status",
+       "target": "https://example.com/", "claimed_at": "2026-01-01T00:00:00Z"}'
+```
+
+```bash
+curl -s http://127.0.0.1:8080/v1/receipts/<receipt_id>   > receipt.json
+curl -s http://127.0.0.1:8080/.well-known/poaw-keys.json > keys.json
+uv run spec/tools/check.py receipt.json keys.json --rpc https://sepolia.base.org
+```
+
+The checker verifies the signature, the Merkle inclusion proof, and — given `--rpc` — the on-chain anchor.

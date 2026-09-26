@@ -1,0 +1,24 @@
+---
+title: Reason codes
+description: The reason_code values that accompany a receipt's verdict, and which verdicts they go with.
+---
+
+A receipt's `verdict.reason_code` explains why a verdict came out the way it did. It should be present for every
+verdict except `verified`, and must be present for `unverifiable`.
+
+| Code | Used with | Meaning |
+|---|---|---|
+| `not_found` | `failed` | The destination was read, and no matching outcome existed by the deadline. |
+| `content_mismatch` | `mismatch` | The fingerprint differs from what the claim stated. |
+| `target_mismatch` | `mismatch` | The outcome exists, but under a different target — a different account, branch, or recipient. |
+| `observed_after_tolerance` | `late` | The outcome is present and matches, but appeared after the tolerance window. |
+| `no_connection` | `unverifiable` | The issuer holds no access to the destination for this target. |
+| `permission_denied` | `unverifiable` | Access exists, but doesn't cover this read. |
+| `rate_limited` | `unverifiable` | The destination throttled every read attempt until the deadline. |
+| `destination_unavailable` | `unverifiable` | The destination errored or timed out until the deadline. |
+| `unsupported_action` | `unverifiable` | No verifier profile exists for the claim's `action`. |
+| `claim_ambiguous` | `unverifiable` | The claim lacks the fields the action's profile needs. |
+| `verifier_error` | `unverifiable` | An internal failure inside the verifier. |
+
+See [verdicts](/concepts/verdicts) for what each verdict value means, and the rules QED Proof follows when deciding
+between them.

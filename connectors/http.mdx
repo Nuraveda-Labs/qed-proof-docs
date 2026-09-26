@@ -1,0 +1,38 @@
+---
+title: http.url.status
+description: Check that a public URL returns the status code — and optionally the exact content — your agent claimed, no connector required.
+---
+
+`http.url.status` needs no connector. The target is the URL itself, so there's nothing to connect or authorize —
+QED Proof fetches it directly.
+
+## What it verifies
+
+The target must be an `https://` URL. QED Proof requests it and compares the response against your params:
+
+<ParamField path="status" type="integer" default="200">
+  The HTTP status code you expect. A response matching it is `verified`; `404` when you expected something else is
+  `failed`; any other mismatch is `mismatch`. A `429` or `5xx` response is retried rather than judged, since it may
+  just mean the server is temporarily unavailable.
+</ParamField>
+
+<ParamField path="content_fingerprint" type="string">
+  Optional. A fingerprint of the exact response body you expect (see below). If it doesn't match what the URL
+  actually returns, the verdict is `mismatch` even if the status code was right.
+</ParamField>
+
+Only the first 1,000,000 bytes of the response body are read for fingerprinting.
+
+## Content fingerprint
+
+A fingerprint is computed by normalizing the response text — Unicode NFC normalization, `\r\n` and `\r` converted to
+`\n`, trailing whitespace stripped from each line, and leading/trailing blank lines stripped — then hashing the
+result with SHA-256 and encoding it as `sha256:<base64url>`. Two responses that differ only in trailing whitespace or
+line-ending style produce the same fingerprint.
+
+## Destination safety
+
+Requests only ever reach a public address. QED Proof resolves the URL's hostname once, and only proceeds if every
+address that name resolves to is a public, global IP — no private, loopback or link-local destination. It connects
+directly to that resolved address (never re-resolving the name), and doesn't follow redirects, since a redirect could
+point at a non-public host. If the hostname doesn't resolve to a public address at all, the claim is `unverifiable`.

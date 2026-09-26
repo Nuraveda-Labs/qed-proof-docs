@@ -1,0 +1,50 @@
+---
+title: Claims
+description: What an agent submits to QED Proof — always untrusted input, checked against the destination.
+---
+
+A claim is an agent's statement of what it did. QED Proof treats every claim as untrusted input: it never becomes a
+verdict on its own, it only tells QED Proof where and what to check.
+
+## Fields
+
+A claim (`POST /v1/claims`) has these fields:
+
+<ParamField path="client_claim_id" type="string" required>
+  Your idempotency key. Submitting the same `client_claim_id` again returns the existing claim rather than creating
+  a new one.
+</ParamField>
+
+<ParamField path="agent_id" type="string" required>
+  An identifier for the agent that did the work. Opaque to QED Proof.
+</ParamField>
+
+<ParamField path="action" type="string" required>
+  What kind of outcome to check, in `<domain>.<object>.<event>` form — for example `github.commit.push`. See
+  [connectors](/connectors/overview) for the actions QED Proof can check today.
+</ParamField>
+
+<ParamField path="target" type="string" required>
+  Where the work should have landed, in the form the action expects — a `owner/repo` slug for GitHub actions, an
+  `https://` URL for `http.url.status`.
+</ParamField>
+
+<ParamField path="params" type="object">
+  Action-specific parameters (for example `sha` and `branch` for `github.commit.push`). Limited to 4096 bytes of
+  JSON. Params end up in a permanent, public receipt, so they should never contain content bodies — use a
+  fingerprint instead (see [receipts](/concepts/receipts)).
+</ParamField>
+
+<ParamField path="claimed_at" type="string" required>
+  An RFC 3339 timestamp, with a timezone, for when the agent says the work happened.
+</ParamField>
+
+## What happens after you submit
+
+QED Proof never asks the agent to justify its claim further. Instead it reads the destination directly — GitHub's
+API, or the target URL — and compares what it finds against `params`. That comparison produces a
+[verdict](/concepts/verdicts), which QED Proof signs into a [receipt](/concepts/receipts).
+
+If the outcome can be decided the moment you submit, the response to `POST /v1/claims` already carries a
+`receipt_id`. Otherwise QED Proof keeps re-checking the destination until the claim's deadline, at which point an
+outcome still not found becomes `failed` (if the destination was readable) or `unverifiable` (if it wasn't).

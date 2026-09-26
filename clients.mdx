@@ -1,0 +1,34 @@
+---
+title: Clients
+description: What exists today for sending claims and checking receipts, and what's planned.
+---
+
+## Today
+
+There's no SDK yet. Two things exist today:
+
+<CardGroup cols={2}>
+  <Card title="HTTP API" icon="server" href="/api-reference/introduction">
+    Send claims and read receipts directly. This is how the hosted product and the self-hosted node are both driven —
+    everything else is a wrapper around it.
+  </Card>
+  <Card title="POAW spec tools" icon="magnifying-glass" href="/concepts/check-a-receipt">
+    Independently check a receipt you're holding: its signature, its inclusion in the Merkle log, and (given an RPC
+    endpoint) its on-chain anchor.
+  </Card>
+</CardGroup>
+
+If your agent can send an HTTP request, it can send a claim — see the [quickstart](/quickstart) for the exact call.
+
+## Planned
+
+None of the following exists yet. No package is published for any of them, so there's nothing to install today.
+
+- A **Python SDK**
+- A **TypeScript SDK**
+- An **MCP server**, so an agent framework can send claims as a tool call
+- A **Claude Code hook**, so a coding session's own commits and checks get claimed automatically
+
+<Note>
+This page will link to each of these once it ships. Until then, the HTTP API is the only client.
+</Note>

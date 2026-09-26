@@ -1,0 +1,62 @@
+---
+title: Receipts
+description: The signed, tamper-evident record of a claim, what QED Proof observed, and the resulting verdict.
+---
+
+A receipt is the record QED Proof issues once a claim is decided. It's designed to be checked by anyone, without
+trusting QED Proof's servers — all it takes is the issuer's public key, the log's inclusion proof, and a public
+blockchain RPC.
+
+## Shape
+
+A receipt has three top-level parts:
+
+```json
+{
+  "body":      { "..." },
+  "signature": { "..." },
+  "proof":     { "..." }
+}
+```
+
+`body` and `signature` are immutable once issued. `proof` is attached by the log and can grow over time — for
+example, when an anchor lands — so it's verified on its own terms rather than being part of the signature.
+
+### `body`
+
+The signed statement. It includes the spec version, a unique `receipt_id`, when it was issued, the issuer's key ID,
+the agent reference, the [claim](/concepts/claims), the observation, the [verdict](/concepts/verdicts), and a
+`trust_level` (see [trust levels](/concepts/trust-levels)).
+
+The `observation` records facts about what the verifier saw at the destination — identifiers, timestamps, status
+codes, counts, and fingerprints. QED Proof's privacy policy puts it plainly: it records **fingerprints and facts,
+not content** — never the text of a post, an email, or a file. A `content_fingerprint`, when present, is
+`sha256:` followed by the base64url-encoded SHA-256 hash of the normalized content, never the content itself.
+
+### `signature`
+
+```json
+"signature": { "alg": "Ed25519", "key_id": "ed25519:...", "value": "<base64url signature>" }
+```
+
+The signature is computed over the domain-separated message `"POAW-RECEIPT-V0" || 0x0A || JCS(body)`, where `JCS` is
+the RFC 8785 JSON Canonicalization Scheme applied to `body`. Canonicalizing first means the signature doesn't depend
+on key ordering or whitespace in whatever JSON library produced it.
+
+`key_id` is derived from the issuer's public key (`"ed25519:" + base64url(SHA-256(raw public key))`) and must match
+`body.issuer.key_id`. Issuers publish their current and past keys at `/.well-known/poaw-keys.json` — see
+[authentication](/api-reference/authentication).
+
+### `proof`
+
+Log inclusion and, once it lands, the on-chain anchor. See [the Merkle log](/concepts/merkle-log) and
+[anchoring](/concepts/anchoring).
+
+## Fetching a receipt
+
+```bash
+curl https://api.qedproof.site/v1/receipts/<receipt_id>
+```
+
+Reading a receipt needs no API key — receipts are meant to be shared and checked by anyone. This endpoint is rate
+limited per IP address rather than per key.

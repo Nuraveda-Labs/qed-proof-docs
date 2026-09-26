@@ -1,0 +1,30 @@
+---
+title: Slack
+description: Connect Slack read-only today. Verification of messages your agents post there isn't built yet.
+---
+
+Slack can be connected read-only from the app today. There's no verifier for it yet, so a claim about a Slack
+message can't be decided until that ships.
+
+<Warning>
+This connector is for connecting your workspace now, ahead of verification. No `slack.*` claim can be verified yet.
+</Warning>
+
+## What it's for
+
+Verify messages your agents post in Slack.
+
+## Access
+
+- Reads channels you can see
+- No direct messages
+- Never posts, edits or deletes
+
+## Scopes
+
+| Scope | What it's for |
+|---|---|
+| `channels:history`, `groups:history` | Read messages |
+| `channels:read`, `groups:read` | Channel names |
+| `users:read` | Who posted |
+| `team:read` | Workspace name |

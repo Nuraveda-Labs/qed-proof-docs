@@ -1,0 +1,45 @@
+---
+title: Errors
+description: How the QED Proof API reports failures — an HTTP status code plus a plain-text detail message.
+---
+
+The API reports errors as an HTTP status code with a JSON body:
+
+```json
+{ "detail": "<message>" }
+```
+
+There is no separate error-code taxonomy — `detail` is a human-readable message, and the status code is what your
+code should branch on. Some of the messages you'll see:
+
+| Status | When | `detail` |
+|---|---|---|
+| `401` | Missing or invalid API key | `invalid or missing API key` |
+| `402` | The deployment refused a new claim (for example, a workspace limit) | deployment-specific message |
+| `404` | Claim or receipt not found | `claim not found` / `receipt not found` |
+| `413` | Request body larger than the size limit | `request body too large` |
+| `422` | The claim's `params` don't match what the action expects | `invalid params for <action>: <detail>` |
+| `429` | Rate limit exceeded | `rate limit exceeded` |
+
+## `413` — request too large
+
+The body size is checked before anything is parsed, from the `Content-Length` header, so an oversized request never
+reaches claim validation.
+
+## `422` — invalid params
+
+Returned when a claim's `action` is recognized but its `params` don't satisfy that action's schema — for example, a
+`github.commit.push` claim whose `sha` isn't 40 hex characters. The message names the field and what's wrong with
+it. See each action's expected `params` in [connectors](/connectors/overview).
+
+## `429` — rate limited
+
+Returned with a `Retry-After` header telling you how many seconds to wait before trying again. Claim submission and
+claim-status reads are limited per API key; receipt reads are limited per requesting IP address, since they need no
+key.
+
+## `402` — claim refused before it was created
+
+A deployment may refuse to accept a brand-new claim up front — for example, a workspace limit. A refused claim
+creates nothing and never gets a receipt. This can only happen at submission time: once a claim exists, nothing
+changes its verdict.

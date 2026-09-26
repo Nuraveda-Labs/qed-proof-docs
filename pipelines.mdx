@@ -1,0 +1,33 @@
+---
+title: Pipelines
+description: A planned way to define your own proof around the actions that matter to you, not just the actions QED Proof already checks.
+---
+
+<Warning>
+Pipelines are a design, not a shipped feature. Nothing on this page can be built or run yet, and there's no
+timeline to share.
+</Warning>
+
+## The idea
+
+Today, QED Proof proves the claims it was built to check: a commit landed, a PR opened, a URL answers. Pipelines are
+meant to let you define proof around the actions that actually cost you money or trust — for example, "prove it
+whenever my agent changes an ad budget," not "prove every commit."
+
+A pipeline would be composed from four parts: a **connector** (a read-only connection to one destination), a
+**trigger** (the agent's claim, the destination's own change history, or both), a **filter** (conditions on the
+destination's own event fields — event type, object, amount, actor), and a **check** (a published verifier, optionally
+narrowed further) — producing **outcomes** (a receipt, and alerts on the verdicts you care about).
+
+## Rules the design holds to
+
+- **Facts still come only from the destination.** A pipeline's filter and check can only read what the connector
+  reads — never anything the agent reports about itself.
+- **Your own conditions can only narrow `verified`, never widen it.** A condition you add can turn a `verified` into
+  a `mismatch`; it can never turn a failed check into `verified`.
+- **The pipeline itself is part of the receipt.** The exact pipeline definition that produced a verdict would be
+  fingerprinted and recorded alongside it — a pipeline digest — so anyone holding the receipt can see precisely what
+  was checked, not just the result.
+
+None of this changes the invariants the product already holds to: evidence comes from the destination, and a
+verifier error still means `unverifiable`, never `verified`.

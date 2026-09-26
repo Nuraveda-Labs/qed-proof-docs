@@ -1,0 +1,49 @@
+---
+title: Connectors
+description: How QED Proof connects to a destination, what each connector reads, and which ones can verify a claim today.
+---
+
+A connector is a read-only connection to a destination: GitHub, a Facebook Page, an Instagram account, a Meta ad
+account, a Slack workspace, or an X account. Connecting one lets QED Proof read the facts a verifier needs — it never
+lets QED Proof write, post, edit or delete anything there.
+
+Not every connected destination can be checked yet. Two things are true at once for most connectors today:
+
+- **You can connect it now**, read-only, and see what QED Proof would read.
+- **Verification isn't built for it yet.** No claim against that destination can be decided until a verifier for it
+  ships.
+
+<Note>
+Only GitHub has a verifier today. Facebook Pages, Instagram, Meta Ads, Slack and X can be connected, but claims
+against them aren't checked yet. WhatsApp and Gmail aren't connectable at all — see [coming soon](/connectors/coming-soon).
+</Note>
+
+## Status today
+
+| Connector | Category | Connect now | Verification |
+|---|---|---|---|
+| [GitHub](/connectors/github) | Code | Yes | Live — `github.commit.push`, `github.pr.open`, `github.checks.pass` |
+| [Facebook Pages](/connectors/meta) | Social | Yes (read-only) | Not built yet |
+| [Instagram](/connectors/meta) | Social | Yes (read-only) | Not built yet |
+| [Meta Ads](/connectors/meta) | Ads | Yes (read-only) | Not built yet |
+| [Slack](/connectors/slack) | Messaging | Yes (read-only) | Not built yet |
+| [X](/connectors/x) | Social | Yes (read-only) | Not built yet |
+| [WhatsApp](/connectors/coming-soon) | Messaging | Soon | Not built yet |
+| [Gmail](/connectors/coming-soon) | Messaging | Soon | Not built yet |
+
+One action needs no connector at all: [`http.url.status`](/connectors/http) checks a public URL directly.
+
+<CardGroup cols={2}>
+  <Card title="GitHub" icon="github" href="/connectors/github">
+    Verify commits, pull requests and CI checks.
+  </Card>
+  <Card title="http.url.status" icon="link" href="/connectors/http">
+    Check that a URL returns the status — and optionally the content — you claimed.
+  </Card>
+  <Card title="Facebook Pages, Instagram, Meta Ads" icon="facebook" href="/connectors/meta">
+    Connect them today; verification is coming.
+  </Card>
+  <Card title="Slack and X" icon="slack" href="/connectors/slack">
+    Connect them today; verification is coming.
+  </Card>
+</CardGroup>

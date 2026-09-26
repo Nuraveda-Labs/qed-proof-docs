@@ -1,0 +1,32 @@
+export const VerdictTable = () => (
+  <table>
+    <thead>
+      <tr>
+        <th>Verdict</th>
+        <th>Meaning</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>verified</code></td>
+        <td>The destination shows the claimed outcome, matching every field the profile requires, observed no later than <code>claimed_at</code> plus tolerance.</td>
+      </tr>
+      <tr>
+        <td><code>late</code></td>
+        <td>The outcome is present and matches, but it appeared after <code>claimed_at</code> plus tolerance (and before the deadline).</td>
+      </tr>
+      <tr>
+        <td><code>mismatch</code></td>
+        <td>The destination shows an outcome for the target, but a required field differs — for example, the wrong branch.</td>
+      </tr>
+      <tr>
+        <td><code>failed</code></td>
+        <td>The verifier could read the destination, and the outcome was not present by the deadline.</td>
+      </tr>
+      <tr>
+        <td><code>unverifiable</code></td>
+        <td>The verifier could not determine the outcome — an error, timeout, missing permission, or ambiguous claim. Never evidence for or against the agent.</td>
+      </tr>
+    </tbody>
+  </table>
+);

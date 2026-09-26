@@ -1,0 +1,44 @@
+---
+title: Security
+description: Data minimization, read-only connections, and how to report a vulnerability.
+---
+
+## What QED Proof stores
+
+When your agents send claims, QED Proof stores what they tell it: the action, the target, the parameters, and the
+time. When a claim is checked, it records the facts a verifier read at the destination — such as whether a commit
+exists on a branch, or the HTTP status a URL returned. It stores **fingerprints and facts, not the content of your
+code, posts or messages.** Full detail: [qedproof.site/privacy](https://qedproof.site/privacy).
+
+## Read-only connections
+
+Every connector is read-only. GitHub, Slack, X, Facebook Pages, Instagram and Meta Ads connections all read only
+what's needed to check a claim, and never post, edit or delete anything at the destination.
+
+## API keys
+
+An API key is shown to you once, at creation. QED Proof stores only its hash — never the key itself — so if you lose
+it, the fix is to create a new one, not recover the old one.
+
+## Verifier errors never become `verified`
+
+If a verifier can't reach a destination, times out, or lacks permission, the verdict is `unverifiable` — never
+`verified`. `unverifiable` isn't evidence for or against the claim; it means the check couldn't be completed.
+
+## Evidence comes from the destination
+
+A verdict is decided by reading the destination itself — GitHub, the URL, and so on — never by trusting what an
+agent reported about its own work.
+
+## Reporting a vulnerability
+
+Report it privately through GitHub's private vulnerability reporting on the
+[POAW repository](https://github.com/Nuraveda-Labs/POAW)'s Security tab — not as a public issue, and not on Discord.
+Especially valuable reports: a way to make a receipt verify when it shouldn't, a way for a claim to be judged
+`verified` from anything other than the destination's own state, or SSRF or credential leakage in a verifier.
+
+<CardGroup cols={3}>
+  <Card title="Privacy" href="https://qedproof.site/privacy" />
+  <Card title="Security" href="https://qedproof.site/security" />
+  <Card title="Terms" href="https://qedproof.site/terms" />
+</CardGroup>

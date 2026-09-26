@@ -1,0 +1,88 @@
+---
+title: Quickstart
+description: Connect GitHub, create an API key, and send your first claim to QED Proof in a few minutes.
+---
+
+import { VerdictTable } from '/snippets/verdict-table.mdx';
+
+This walks through sending a `github.commit.push` claim and reading back its receipt, using the hosted service at
+[qedproof.site](https://qedproof.site).
+
+<Steps>
+  <Step title="Sign in and create a workspace">
+    Go to [qedproof.site/app](https://qedproof.site/app) and sign in. Create a workspace — everything below (API keys,
+    connections, claims) belongs to a workspace.
+  </Step>
+  <Step title="Connect GitHub">
+    The example claim below checks a GitHub commit, so connect GitHub first on the **Connections** screen
+    ([qedproof.site/app/connections](https://qedproof.site/app/connections)). QED Proof installs a read-only GitHub
+    App on the repositories you choose — it never needs write access to check a claim.
+  </Step>
+  <Step title="Create an API key">
+    On the **Developers** screen ([qedproof.site/app/developers](https://qedproof.site/app/developers)), create an
+    API key. It's shown once, starts with `qed_sk_`, and is stored hashed — QED Proof itself can't show it to you
+    again, so save it somewhere safe.
+  </Step>
+  <Step title="Send your first claim">
+    `POST` a claim to `https://api.qedproof.site/v1/claims` with your API key as a bearer token:
+
+    ```bash
+    curl -X POST https://api.qedproof.site/v1/claims \
+      -H "Authorization: Bearer <your key>" \
+      -H "Content-Type: application/json" \
+      -d '{
+      "client_claim_id": "deploy-2026-09-26-1",
+      "agent_id": "my-agent",
+      "action": "github.commit.push",
+      "target": "owner/repo",
+      "params": { "sha": "<40-hex commit sha>", "branch": "main" },
+      "claimed_at": "2026-09-26T12:00:00Z"
+    }'
+    ```
+
+    `client_claim_id` is your idempotency key — sending the same one again returns the same claim rather than
+    creating a new one. `target` is the `owner/repo` slug; `params.sha` is the full 40-character commit SHA and
+    `params.branch` is the branch it should be reachable from.
+
+    The response is `202 Accepted`. If the destination could be checked immediately, you already get a
+    `receipt_id`:
+
+    ```json
+    {
+      "claim_id": "0f6d2b1c-...",
+      "created": true,
+      "state": "decided",
+      "attempts": 1,
+      "receipt_id": "rcpt_...",
+      "verdict": "verified"
+    }
+    ```
+
+    If the outcome couldn't be decided yet, `state` is `queued`, `receipt_id` is `null`, and QED Proof keeps
+    re-checking the destination until the claim's deadline. `state` becomes `decided` once there's a receipt.
+  </Step>
+  <Step title="Read the claim status and the receipt">
+    Check on a claim any time with its `claim_id`:
+
+    ```bash
+    curl https://api.qedproof.site/v1/claims/<claim_id> \
+      -H "Authorization: Bearer <your key>"
+    ```
+
+    Once there's a `receipt_id`, fetch the full receipt — this endpoint needs no API key, because receipts are meant
+    to be shared and checked by anyone:
+
+    ```bash
+    curl https://api.qedproof.site/v1/receipts/<receipt_id>
+    ```
+
+    The receipt's `verdict.value` is one of:
+
+    <VerdictTable />
+  </Step>
+  <Step title="Check it yourself">
+    A receipt isn't meant to be trusted just because QED Proof returned it. See
+    [check a receipt](/concepts/check-a-receipt) to verify the signature, the Merkle inclusion proof, and the
+    on-chain anchor independently.
+  </Step>
+</Steps>

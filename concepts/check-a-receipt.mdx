@@ -1,0 +1,67 @@
+---
+title: Check a receipt yourself
+description: Verify a receipt's signature, Merkle inclusion, and on-chain anchor independently, without trusting QED Proof's API.
+---
+
+import { NotBuilt } from '/snippets/not-built.mdx';
+
+A receipt is only useful if you don't have to trust QED Proof to believe it. The reference checker in the open-source
+[POAW repository](https://github.com/Nuraveda-Labs/POAW) verifies a receipt entirely offline (plus one optional RPC
+call for the anchor), against nothing but the receipt itself and the issuer's published keys.
+
+## What it checks
+
+1. Parses the receipt and rejects an unsupported spec version.
+2. Resolves `issuer.key_id` against the issuer's published key set, checks the key's validity window, and verifies
+   the Ed25519 signature over the receipt body.
+3. Recomputes the claim digest and confirms it matches.
+4. If a `proof` is present, verifies the Merkle inclusion proof — and, if you pass an RPC URL, verifies the on-chain
+   anchor too (see [anchoring](/concepts/anchoring)).
+5. Reports the achieved [trust level](/concepts/trust-levels) and the verdict.
+
+## Running it
+
+From a checkout of the [POAW repository](https://github.com/Nuraveda-Labs/POAW):
+
+```bash
+# fetch the receipt and the issuer's public keys
+curl https://api.qedproof.site/v1/receipts/<receipt_id>      > receipt.json
+curl https://api.qedproof.site/.well-known/poaw-keys.json    > keys.json
+
+# check it, including the on-chain anchor
+uv run spec/tools/check.py receipt.json keys.json --rpc https://sepolia.base.org
+```
+
+Leave off `--rpc` to check everything except the anchor (signature, schema, and Merkle inclusion), which reports the
+anchor as `"not_checked_offline"` rather than skipping it silently.
+
+The tool prints a JSON report, for example:
+
+```json
+{
+  "checks": {
+    "spec_version": true,
+    "schema": true,
+    "integers_only": true,
+    "key": true,
+    "signature": true,
+    "claim_digest": true,
+    "inclusion": true,
+    "anchor": true
+  },
+  "valid": true,
+  "achieved_trust_level": 2,
+  "verdict": "verified"
+}
+```
+
+`valid` is only `true` if every applicable check passes. `achieved_trust_level` is what the checker could actually
+confirm — 2 requires both a verified inclusion proof and a verified on-chain anchor; without `--rpc`, the ceiling is
+1.
+
+## In the browser
+
+<NotBuilt what="An in-browser receipt checker at qedproof.site/r/<receipt_id>" />
+
+Until then, use the command-line checker above, or point any RFC 6962-compatible Merkle verifier and an Ed25519
+signature check at the receipt's `body`, `signature`, and `proof` per the [receipt spec](https://github.com/Nuraveda-Labs/POAW).

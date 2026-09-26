@@ -1,0 +1,46 @@
+---
+title: Merkle log
+description: The append-only, RFC 6962-style log every receipt is written into.
+---
+
+Every receipt QED Proof issues is appended to a Merkle tree log, in the style of RFC 6962 (the Certificate
+Transparency log format). This is what makes a receipt checkable independent of QED Proof's own database: instead of
+trusting an API response, you verify that a receipt is included in a tree whose root is public.
+
+## Leaves
+
+Each receipt becomes one leaf:
+
+```
+leaf_hash = SHA-256( 0x00 || JCS({ "body": body, "signature": signature }) )
+```
+
+Interior nodes are `SHA-256( 0x01 || left || right )`. The `0x00` / `0x01` prefixes on leaves and interior nodes
+follow RFC 6962, and stop a leaf hash from ever being reinterpreted as an interior node hash (or vice versa).
+
+The log is append-only by construction — QED Proof's storage refuses updates and deletes against receipts, leaves,
+and roots.
+
+## The `proof` object
+
+A receipt's `proof` carries what you need to check inclusion:
+
+```json
+"proof": {
+  "log_id": "<base64url>",
+  "leaf_index": 88213,
+  "tree_size": 88240,
+  "root_hash": "<base64url>",
+  "inclusion": ["<base64url>", "..."],
+  "anchor": { "..." }
+}
+```
+
+To check inclusion, recompute `leaf_hash` from the receipt's own `body` and `signature`, then run the RFC 6962
+audit-path verification using `leaf_index`, `tree_size`, and the hashes in `inclusion`. It must produce exactly
+`root_hash`.
+
+`anchor` may be absent — that happens at trust level 1, or at trust level 2 before an anchor has landed yet for this
+part of the tree. An absent anchor is a limitation of the proof, not an invalid receipt. See
+[anchoring](/concepts/anchoring) for what it adds, and [check a receipt](/concepts/check-a-receipt) for running this
+verification yourself.
