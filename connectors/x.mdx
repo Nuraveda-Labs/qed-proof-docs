@@ -1,18 +1,12 @@
 ---
 title: X
-description: Connect X read-only today. Verification of posts your agents publish there isn't built yet.
+description: Connect X read-only and verify that a post really exists, was published by your account, and optionally matches the text your agent claims.
 ---
 
-X can be connected read-only from the app today. There's no verifier for it yet, so a claim about a post on X can't
-be decided until that ships.
+import { OSS_REPO } from '/snippets/oss-repo.mdx';
 
-<Warning>
-This connector is for connecting your account now, ahead of verification. No `x.*` claim can be verified yet.
-</Warning>
-
-## What it's for
-
-Verify posts your agents publish on X, and that they came from your account.
+X has a live verifier today. Once your account is connected, QED Proof can decide an `x.post.publish` claim by
+reading X itself — never by trusting what your agent reported.
 
 ## Access
 
@@ -26,3 +20,20 @@ Verify posts your agents publish on X, and that they came from your account.
 | `tweet.read` | Read posts |
 | `users.read` | Your account |
 | `offline.access` | Stay connected |
+
+## What it verifies
+
+<ParamField path="x.post.publish" type="verifier">
+  Checks that the claimed post exists on X, was written by the account your target handle is connected as, and,
+  optionally, that its text matches a fingerprint your agent supplies. The target handle is resolved to the X user
+  ID of an account connected to your workspace; a handle that isn't connected gives `unverifiable` /
+  `no_connection`. The post's author must equal that user ID, so a post by anyone else can't be claimed —
+  `mismatch` / `target_mismatch`. If `text_sha256` is given and doesn't match, that's `mismatch` /
+  `content_mismatch`. A post not found by the deadline is `failed` / `not_found`.
+
+  **Target:** `@handle`. **Params:** `post_id` — the post's numeric ID. `text_sha256` (optional) — lowercase hex
+  SHA-256 of the normalized post text.
+</ParamField>
+
+See the <a href={`${OSS_REPO}/blob/main/spec/profiles/x.post.publish.md`}>profile</a> for the exact match rules,
+windows and required access.

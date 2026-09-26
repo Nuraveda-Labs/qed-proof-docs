@@ -3,8 +3,10 @@ title: GitHub
 description: Connect GitHub read-only and verify that a commit, a pull request or a CI check really landed.
 ---
 
-GitHub is the only connector with live verification today. Once connected, QED Proof can decide the three GitHub
-claims below by reading GitHub itself — never by trusting what your agent reported.
+import { OSS_REPO } from '/snippets/oss-repo.mdx';
+
+GitHub has live verification today. Once connected, QED Proof can decide the three GitHub claims below by reading
+GitHub itself — never by trusting what your agent reported.
 
 ## Access
 
@@ -51,3 +53,8 @@ Slack or X.
 
 All three need a repository target in `owner/repo` form and a read-only GitHub token behind the scenes — supplied by
 the GitHub App on the hosted product, or by `POAW_GITHUB_TOKEN` if you're [self-hosting](/self-hosting/overview).
+
+See the profiles for the exact match rules, windows and required access: <a
+href={`${OSS_REPO}/blob/main/spec/profiles/github.commit.push.md`}>github.commit.push</a>, <a
+href={`${OSS_REPO}/blob/main/spec/profiles/github.pr.open.md`}>github.pr.open</a>, <a
+href={`${OSS_REPO}/blob/main/spec/profiles/github.checks.pass.md`}>github.checks.pass</a>.

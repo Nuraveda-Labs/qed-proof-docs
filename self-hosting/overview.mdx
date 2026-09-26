@@ -3,6 +3,8 @@ title: Self-hosting
 description: Run your own POAW node — the same code the hosted product runs on.
 ---
 
+import { OSS_REPO, OSS_NAME } from '/snippets/oss-repo.mdx';
+
 QED Proof's hosted service and a self-hosted node run the same code: claims API, verifiers, signing, the Merkle log,
 and anchoring. Self-hosting trades the console, managed GitHub App and cloud key management for full control of your
 own database and signing key.
@@ -34,9 +36,9 @@ Lose the key and there's no way to reissue the same receipts under it.
 
 ## License
 
-The node ([`node/`](https://github.com/Nuraveda-Labs/POAW/tree/main/node)) is **AGPL-3.0-only**: run it freely, but a
+The node (<a href={`${OSS_REPO}/tree/main/node`}><code>node/</code></a>) is **AGPL-3.0-only**: run it freely, but a
 modified, hosted version of it must share its changes. The spec and `core-python` are **Apache-2.0**: embed them
-anywhere. See the repository's [`NOTICE`](https://github.com/Nuraveda-Labs/POAW/blob/main/NOTICE) for the full
+anywhere. See the repository's <a href={`${OSS_REPO}/blob/main/NOTICE`}><code>NOTICE</code></a> for the full
 breakdown.
 
-Repository: **[github.com/Nuraveda-Labs/POAW](https://github.com/Nuraveda-Labs/POAW)**.
+Repository: <a href={OSS_REPO}>{OSS_REPO}</a>.

@@ -3,9 +3,9 @@ title: Connectors
 description: How QED Proof connects to a destination, what each connector reads, and which ones can verify a claim today.
 ---
 
-A connector is a read-only connection to a destination: GitHub, a Facebook Page, an Instagram account, a Meta ad
-account, a Slack workspace, or an X account. Connecting one lets QED Proof read the facts a verifier needs — it never
-lets QED Proof write, post, edit or delete anything there.
+A connector is a read-only connection to a destination: GitHub, GitLab, a Facebook Page, an Instagram account, a
+Meta ad account, a Slack workspace, or an X account. Connecting one lets QED Proof read the facts a verifier
+needs — it never lets QED Proof write, post, edit or delete anything there.
 
 Not every connected destination can be checked yet. Two things are true at once for most connectors today:
 
@@ -14,8 +14,9 @@ Not every connected destination can be checked yet. Two things are true at once 
   ships.
 
 <Note>
-Only GitHub has a verifier today. Facebook Pages, Instagram, Meta Ads, Slack and X can be connected, but claims
-against them aren't checked yet. WhatsApp and Gmail aren't connectable at all — see [coming soon](/connectors/coming-soon).
+GitHub, Slack and X have live verifiers today. GitLab, Facebook Pages, Instagram and Meta Ads can be connected, but
+claims against them aren't checked yet. WhatsApp and Gmail aren't connectable at all — see
+[coming soon](/connectors/coming-soon).
 </Note>
 
 ## Status today
@@ -23,11 +24,12 @@ against them aren't checked yet. WhatsApp and Gmail aren't connectable at all �
 | Connector | Category | Connect now | Verification |
 |---|---|---|---|
 | [GitHub](/connectors/github) | Code | Yes | Live — `github.commit.push`, `github.pr.open`, `github.checks.pass` |
+| [GitLab](/connectors/gitlab) | Code | Yes (read-only) | Not built yet |
 | [Facebook Pages](/connectors/meta) | Social | Yes (read-only) | Not built yet |
 | [Instagram](/connectors/meta) | Social | Yes (read-only) | Not built yet |
 | [Meta Ads](/connectors/meta) | Ads | Yes (read-only) | Not built yet |
-| [Slack](/connectors/slack) | Messaging | Yes (read-only) | Not built yet |
-| [X](/connectors/x) | Social | Yes (read-only) | Not built yet |
+| [Slack](/connectors/slack) | Messaging | Yes | Live — `slack.message.post` |
+| [X](/connectors/x) | Social | Yes | Live — `x.post.publish` |
 | [WhatsApp](/connectors/coming-soon) | Messaging | Soon | Not built yet |
 | [Gmail](/connectors/coming-soon) | Messaging | Soon | Not built yet |
 
@@ -37,13 +39,26 @@ One action needs no connector at all: [`http.url.status`](/connectors/http) chec
   <Card title="GitHub" icon="github" href="/connectors/github">
     Verify commits, pull requests and CI checks.
   </Card>
+  <Card title="Slack and X" icon="slack" href="/connectors/slack">
+    Verify messages and posts.
+  </Card>
   <Card title="http.url.status" icon="link" href="/connectors/http">
     Check that a URL returns the status — and optionally the content — you claimed.
   </Card>
-  <Card title="Facebook Pages, Instagram, Meta Ads" icon="facebook" href="/connectors/meta">
-    Connect them today; verification is coming.
-  </Card>
-  <Card title="Slack and X" icon="slack" href="/connectors/slack">
+  <Card title="GitLab, Facebook Pages, Instagram, Meta Ads" icon="facebook" href="/connectors/gitlab">
     Connect them today; verification is coming.
   </Card>
 </CardGroup>
+
+## Planned: more ways to connect
+
+<Note>
+Planned, not built. This describes a proposed design, with no timeline to share.
+</Note>
+
+Today, every connector is QED Proof's own one-click OAuth app. A proposed design would add three more kinds of
+connection: pasting an **API key** for a provider that doesn't do OAuth well for server-side reads, defining a
+**custom API check** against your own systems (a base URL plus declarative assertions, so you can prove an outcome
+in software QED Proof doesn't know about), and connecting through **your own OAuth app** for providers that gate
+their app review, rather than waiting on QED Proof's. All three would keep the same rule every connector follows
+today: evidence comes from reading the destination, never from trusting what an agent reports about itself.

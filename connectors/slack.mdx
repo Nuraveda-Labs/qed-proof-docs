@@ -1,18 +1,12 @@
 ---
 title: Slack
-description: Connect Slack read-only today. Verification of messages your agents post there isn't built yet.
+description: Connect Slack read-only and verify that a message really exists in the channel, at the timestamp, your agent claims.
 ---
 
-Slack can be connected read-only from the app today. There's no verifier for it yet, so a claim about a Slack
-message can't be decided until that ships.
+import { OSS_REPO } from '/snippets/oss-repo.mdx';
 
-<Warning>
-This connector is for connecting your workspace now, ahead of verification. No `slack.*` claim can be verified yet.
-</Warning>
-
-## What it's for
-
-Verify messages your agents post in Slack.
+Slack has a live verifier today. Once your workspace is connected, QED Proof can decide a `slack.message.post` claim
+by reading Slack itself — never by trusting what your agent reported.
 
 ## Access
 
@@ -28,3 +22,19 @@ Verify messages your agents post in Slack.
 | `channels:read`, `groups:read` | Channel names |
 | `users:read` | Who posted |
 | `team:read` | Workspace name |
+
+## What it verifies
+
+<ParamField path="slack.message.post" type="verifier">
+  Checks that a message with exactly the claimed timestamp exists in the claimed channel and, optionally, that its
+  text matches a fingerprint your agent supplies. The claim's `team_id` is bound to your workspace's connection; a
+  team with no connection gives `unverifiable` / `no_connection`. A `ts` present but with a different text
+  fingerprint is `mismatch` / `content_mismatch`. No message with that `ts` by the deadline is `failed` /
+  `not_found`. Direct messages are out of scope.
+
+  **Target:** `slack://<team_id>/<channel_id>`. **Params:** `ts` — the message timestamp Slack returned when it was
+  posted. `text_sha256` (optional) — lowercase hex SHA-256 of the normalized message text.
+</ParamField>
+
+See the <a href={`${OSS_REPO}/blob/main/spec/profiles/slack.message.post.md`}>profile</a> for the exact match rules,
+windows and required access.

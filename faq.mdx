@@ -1,0 +1,53 @@
+---
+title: FAQ
+description: Short, verifiable answers about tokens, trust, storage, verifiers, self-hosting and anchoring.
+---
+
+import { OSS_REPO, OSS_NAME } from '/snippets/oss-repo.mdx';
+
+### Does QED Proof have a token?
+
+No. QED Proof has no token, and it isn't affiliated with any token or coin project. It uses a public blockchain only
+to timestamp its log — a practice this spec calls "anchoring" (see [anchoring](/concepts/anchoring)). "POAW" (Proof
+of Agent Work) is the technical name of the open receipt spec and the open-source node — not a product, and not a
+token.
+
+### Do I have to trust QED Proof?
+
+Not for the parts that matter most. A receipt is signed and appended to an append-only Merkle log, and the log's
+root is anchored on a public chain. Anyone holding a receipt can independently check its signature, its inclusion in
+the log, and its anchor — using only the issuer's published public keys and a public RPC endpoint, never QED Proof's
+own API. See [check a receipt](/concepts/check-a-receipt).
+
+### What does QED Proof store?
+
+The claim you submit (action, target, params, timestamp) and the facts a verifier reads at the destination —
+identifiers, timestamps, status codes, and fingerprints. It stores fingerprints and facts, never the content of your
+code, posts or messages. See [security](/security).
+
+### Which actions can it verify today?
+
+Six: `github.commit.push`, `github.pr.open`, `github.checks.pass` (GitHub), `x.post.publish` (X), and
+`slack.message.post` (Slack), plus `http.url.status`, which needs no connector at all. See
+[connectors](/connectors/overview) for what each one checks and requires.
+
+### Can I run it myself?
+
+Yes. The node is open source and self-hostable — the same code the hosted service runs. See
+[self-hosting](/self-hosting/overview).
+
+### Which network is it anchored on?
+
+**Base Sepolia**, a testnet, today (`eip155:84532`). Base mainnet anchoring is not switched on. A self-hosted node
+can be configured to anchor on a different chain, including Base mainnet (`eip155:8453`), but that's a fact about a
+self-hosted node's own configuration, not the hosted service. See [anchoring](/concepts/anchoring).
+
+### Is a verifier error ever recorded as `verified`?
+
+No. Any error, timeout, missing permission, or rate limit at the destination gives `unverifiable` — never a false
+`verified`. See [verdicts](/concepts/verdicts).
+
+### Where's the spec and the code?
+
+The receipt spec, the node, and the reference checker are all in the open-source <a href={OSS_REPO}>{OSS_NAME}
+repository</a>, under Apache-2.0 (spec, `core-python`) and AGPL-3.0-only (the node).

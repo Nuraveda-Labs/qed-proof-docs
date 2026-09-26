@@ -1,0 +1,27 @@
+---
+title: GitLab
+description: Connect GitLab read-only today. Verification of pushes, merge requests and pipelines isn't built yet.
+---
+
+GitLab can be connected read-only from the app today. There's no verifier for it yet, so a claim targeting GitLab
+can't be decided until one ships.
+
+<Warning>
+This connector is for connecting your account now, ahead of verification. No GitLab claim can be verified yet.
+</Warning>
+
+## What it's for
+
+Verify the pushes, merge requests and pipelines your agents claim.
+
+## Access
+
+- Reads the projects your account can see
+- Never posts, edits or deletes
+
+## Scopes
+
+| Scope | What it's for |
+|---|---|
+| `read_api` | Projects, merge requests and pipelines |
+| `read_user` | Your account |

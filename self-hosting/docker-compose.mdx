@@ -3,13 +3,13 @@ title: Docker Compose
 description: Run PostgreSQL and the node with one command.
 ---
 
+import { OSS_REPO, OSS_NAME } from '/snippets/oss-repo.mdx';
+
 ## Start it
 
-```bash
-git clone https://github.com/Nuraveda-Labs/POAW.git && cd POAW
+<pre><code>{`git clone ${OSS_REPO}.git && cd ${OSS_NAME}
 docker compose up -d
-docker compose exec node poaw-node create-workspace --name "My team"
-```
+docker compose exec node poaw-node create-workspace --name "My team"`}</code></pre>
 
 That last command prints an API key. **It's shown once** — store it now.
 

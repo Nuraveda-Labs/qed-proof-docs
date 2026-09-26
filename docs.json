@@ -2,7 +2,7 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "QED Proof",
-  "description": "Independent verification of AI agents' work: signed receipts, an append-only log, anchored on Base.",
+  "description": "Independent verification of AI agents' work: signed receipts, an append-only log, anchored on Base Sepolia (testnet).",
   "colors": {
     "primary": "#5B21B6",
     "light": "#C4A5FF",
@@ -35,7 +35,7 @@
       {
         "tab": "Guides",
         "groups": [
-          { "group": "Get started", "pages": ["index", "quickstart"] },
+          { "group": "Get started", "pages": ["index", "quickstart", "faq"] },
           {
             "group": "Concepts",
             "pages": [
@@ -53,6 +53,7 @@
             "pages": [
               "connectors/overview",
               "connectors/github",
+              "connectors/gitlab",
               "connectors/http",
               "connectors/meta",
               "connectors/slack",

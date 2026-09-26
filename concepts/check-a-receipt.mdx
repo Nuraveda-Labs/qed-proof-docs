@@ -4,9 +4,10 @@ description: Verify a receipt's signature, Merkle inclusion, and on-chain anchor
 ---
 
 import { NotBuilt } from '/snippets/not-built.mdx';
+import { OSS_REPO, OSS_NAME } from '/snippets/oss-repo.mdx';
 
 A receipt is only useful if you don't have to trust QED Proof to believe it. The reference checker in the open-source
-[POAW repository](https://github.com/Nuraveda-Labs/POAW) verifies a receipt entirely offline (plus one optional RPC
+<a href={OSS_REPO}>{OSS_NAME} repository</a> verifies a receipt entirely offline (plus one optional RPC
 call for the anchor), against nothing but the receipt itself and the issuer's published keys.
 
 ## What it checks
@@ -21,7 +22,7 @@ call for the anchor), against nothing but the receipt itself and the issuer's pu
 
 ## Running it
 
-From a checkout of the [POAW repository](https://github.com/Nuraveda-Labs/POAW):
+From a checkout of the <a href={OSS_REPO}>{OSS_NAME} repository</a>:
 
 ```bash
 # fetch the receipt and the issuer's public keys
@@ -64,4 +65,4 @@ confirm — 2 requires both a verified inclusion proof and a verified on-chain a
 <NotBuilt what="An in-browser receipt checker at qedproof.site/r/<receipt_id>" />
 
 Until then, use the command-line checker above, or point any RFC 6962-compatible Merkle verifier and an Ed25519
-signature check at the receipt's `body`, `signature`, and `proof` per the [receipt spec](https://github.com/Nuraveda-Labs/POAW).
+signature check at the receipt's `body`, `signature`, and `proof` per the <a href={OSS_REPO}>receipt spec</a>.

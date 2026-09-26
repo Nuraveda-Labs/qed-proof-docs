@@ -3,6 +3,8 @@ title: Security
 description: Data minimization, read-only connections, and how to report a vulnerability.
 ---
 
+import { OSS_REPO, OSS_NAME } from '/snippets/oss-repo.mdx';
+
 ## What QED Proof stores
 
 When your agents send claims, QED Proof stores what they tell it: the action, the target, the parameters, and the
@@ -32,8 +34,8 @@ agent reported about its own work.
 
 ## Reporting a vulnerability
 
-Report it privately through GitHub's private vulnerability reporting on the
-[POAW repository](https://github.com/Nuraveda-Labs/POAW)'s Security tab — not as a public issue, and not on Discord.
+Report it privately through GitHub's private vulnerability reporting on the <a href={OSS_REPO}>{OSS_NAME}
+repository</a>'s Security tab — not as a public issue, and not on Discord.
 Especially valuable reports: a way to make a receipt verify when it shouldn't, a way for a claim to be judged
 `verified` from anything other than the destination's own state, or SSRF or credential leakage in a verifier.
 

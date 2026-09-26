@@ -39,12 +39,19 @@ description: Run a POAW node without Docker — schema, keys, workspaces and the
 | `POAW_PUBLIC_BASE` | | — | The URL this node is reachable at, used in alert links |
 | `POAW_TICK_SECONDS` | | `30` | How often queued claims are re-checked |
 | `POAW_GITHUB_TOKEN` | | — | A read-only GitHub token for the `github.*` verifiers; without it, they return `unverifiable` |
+| `POAW_SLACK_TOKEN` | | — | A Slack token with read access to the channels you claim about, for `slack.message.post`; without it, it returns `unverifiable` (`no_connection`) |
 | `POAW_ANCHOR_CHAIN` | | — | e.g. `eip155:84532` to anchor the log on Base Sepolia — needs the node installed with the `anchor` extra |
 | `POAW_ANCHOR_KEY_FILE` | with anchoring | — | File holding the 32-byte secp256k1 key that pays for anchors (hex or raw) |
 | `POAW_ANCHOR_RPC` | | the public endpoint for the chain | The chain's JSON-RPC URL |
 | `POAW_ANCHOR_INTERVAL_S` | | — | How often the log is anchored |
 | `POAW_ANCHOR_DAILY_MAX_WEI` | | — | Daily spend cap for anchoring |
 | `POAW_ANCHOR_MIN_BALANCE_WEI` | | — | Minimum balance the anchoring key must keep |
+
+<Note>
+  Tokens are read as `POAW_<PROVIDER>_TOKEN`, one per node, for every workspace. `x.post.publish` also needs the X
+  account bound to the connection, which environment variables can't express, so on a self-hosted node it returns
+  `unverifiable` (`no_connection`). It works on the hosted service, where you connect your X account.
+</Note>
 
 <Note>
 Anchoring only turns on when `POAW_ANCHOR_CHAIN` is set. Without it, the node still signs receipts and maintains the
