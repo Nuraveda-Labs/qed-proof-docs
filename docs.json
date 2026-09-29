@@ -19,7 +19,7 @@
   "favicon": "/favicon.png",
   "navbar": {
     "links": [
-      { "label": "Open source (POAW)", "href": "https://github.com/Nuraveda-Labs/POAW" }
+      { "label": "Open source (qed-proof-core)", "href": "https://github.com/Nuraveda-Labs/qed-proof-core" }
     ],
     "primary": { "type": "button", "label": "Open the app", "href": "https://qedproof.site/app" }
   },
@@ -61,7 +61,7 @@
               "connectors/coming-soon"
             ]
           },
-          { "group": "Build", "pages": ["clients", "alerts", "pipelines"] },
+          { "group": "Build", "pages": ["clients", "sdks/python", "sdks/typescript", "cli", "mcp", "alerts", "pipelines"] },
           {
             "group": "Self-hosting",
             "pages": ["self-hosting/overview", "self-hosting/docker-compose", "self-hosting/cli"]
@@ -86,7 +86,9 @@
             "openapi": "api-reference/openapi.json",
             "pages": [
               "POST /v1/claims",
+              "GET /v1/claims",
               "GET /v1/claims/{claim_id}",
+              "GET /v1/connections",
               "GET /v1/receipts/{receipt_id}",
               "GET /.well-known/poaw-keys.json"
             ]
@@ -97,7 +99,7 @@
   },
   "footer": {
     "socials": {
-      "github": "https://github.com/Nuraveda-Labs/POAW",
+      "github": "https://github.com/Nuraveda-Labs/qed-proof-core",
       "discord": "https://discord.gg/9yhJs3EdCx"
     }
   }

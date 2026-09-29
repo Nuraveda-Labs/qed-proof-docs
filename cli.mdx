@@ -1,0 +1,70 @@
+---
+title: Command-line client
+description: Install the QED Proof CLI to submit claims, inspect verdicts, and verify receipts.
+---
+
+The `qed` command submits and lists claims, watches a claim for its verdict, fetches receipts, and verifies receipt
+files or HTTPS URLs.
+
+## Install
+
+The CLI requires Node.js 18 or later:
+
+```bash
+npm install -g @qed-proof/cli
+```
+
+Check that it is available:
+
+```bash
+qed --help
+```
+
+## Sign in
+
+Create a workspace API key in the [QED Proof app](https://qedproof.site/app), under **Developers → API keys**. Then
+run:
+
+```bash
+qed login
+```
+
+The prompt hides the key as you type. You can also pipe a key through standard input with `qed login --key-stdin`.
+The CLI stores it in the operating system's QED Proof config directory with owner-only file permissions. To remove it,
+run `qed logout`. `QED_PROOF_API_KEY` can be used instead of the saved key; `QED_PROOF_BASE_URL` points the CLI at a
+self-hosted node.
+
+## Submit and inspect claims
+
+Connect the destination in your workspace before submitting. For a GitHub commit:
+
+```bash
+qed claim github.commit.push \
+  --target owner/repo \
+  --param sha=0123456789abcdef0123456789abcdef01234567 \
+  --param branch=main \
+  --agent my-agent \
+  --id deploy-42 \
+  --wait
+```
+
+Use `qed claims list --limit 20` to list recent claims, `qed watch <claim-id>` to poll a claim, and
+`qed receipts get <receipt-id>` to fetch a public receipt. Add `--json` to these commands for machine-readable output.
+The `--id` value is an optional idempotency key.
+
+## Verify a receipt
+
+```bash
+qed verify ./receipt.json
+```
+
+The CLI checks the receipt locally and exits with status 1 if it is invalid. It can also read an HTTPS URL, accept an
+alternate keys file or URL with `--keys`, and check an anchor against an RPC endpoint with `--rpc`:
+
+```bash
+qed verify https://api.qedproof.site/v1/receipts/rcpt_01M3DK4CJD42ZC4HN3BBMKGTW2 \
+  --rpc https://sepolia.base.org
+```
+
+See the [Python SDK](/sdks/python), [TypeScript SDK](/sdks/typescript), or [MCP server](/mcp) for application and agent
+integrations. The [`@qed-proof/cli` package](https://www.npmjs.com/package/@qed-proof/cli) includes the full command help.

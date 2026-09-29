@@ -1,34 +1,25 @@
 ---
-title: Clients
-description: What exists today for sending claims and checking receipts, and what's planned.
+title: SDKs and tools
+description: Choose a QED Proof client for Python, TypeScript, the terminal, or an MCP-compatible agent.
 ---
 
-## Today
-
-There's no SDK yet. Two things exist today:
+Install a published client to send claims and check receipts. The Python and TypeScript SDKs work in your application;
+the CLI works from a terminal; the MCP server exposes QED Proof tools to an MCP client.
 
 <CardGroup cols={2}>
-  <Card title="HTTP API" icon="server" href="/api-reference/introduction">
-    Send claims and read receipts directly. This is how the hosted product and the self-hosted node are both driven —
-    everything else is a wrapper around it.
+  <Card title="Python SDK" icon="code" href="/sdks/python">
+    Submit claims, wait for verdicts, and verify receipts from Python 3.11 or later.
   </Card>
-  <Card title="POAW spec tools" icon="magnifying-glass" href="/concepts/check-a-receipt">
-    Independently check a receipt you're holding: its signature, its inclusion in the Merkle log, and (given an RPC
-    endpoint) its on-chain anchor.
+  <Card title="TypeScript SDK" icon="code" href="/sdks/typescript">
+    Use Node.js 18 or later, Deno, or a browser to submit claims and verify receipts.
+  </Card>
+  <Card title="CLI" icon="terminal" href="/cli">
+    Submit and inspect claims, watch for verdicts, and verify a receipt from your terminal.
+  </Card>
+  <Card title="MCP server" icon="robot" href="/mcp">
+    Connect an MCP client over local stdio or the hosted Streamable HTTP endpoint.
   </Card>
 </CardGroup>
 
-If your agent can send an HTTP request, it can send a claim — see the [quickstart](/quickstart) for the exact call.
-
-## Planned
-
-None of the following exists yet. No package is published for any of them, so there's nothing to install today.
-
-- A **Python SDK**
-- A **TypeScript SDK**
-- An **MCP server**, so an agent framework can send claims as a tool call
-- A **Claude Code hook**, so a coding session's own commits and checks get claimed automatically
-
-<Note>
-This page will link to each of these once it ships. Until then, the HTTP API is the only client.
-</Note>
+You can also call the [HTTP API](/api-reference/introduction) directly. For a first end-to-end request, follow the
+[quickstart](/quickstart).

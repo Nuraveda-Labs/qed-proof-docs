@@ -1,0 +1,52 @@
+---
+title: MCP server
+description: Connect QED Proof to an MCP client over local stdio or hosted Streamable HTTP.
+---
+
+The `@qed-proof/mcp` package exposes QED Proof as tools to an MCP client. It requires Node.js 20 or later. The server
+offers `submit_claim`, `get_verdict`, `get_receipt`, `verify_receipt`, `list_claims`, and `list_connections`.
+
+## Create a key
+
+Create a workspace API key in the [QED Proof app](https://qedproof.site/app), under **Developers → API keys**. A claim's
+`target` and `params` are included in its receipt, which is public and permanent. Do not submit secrets or private
+content in these fields.
+
+## Local server with Claude Code
+
+The local server uses stdio and reads the key from `QED_API_KEY`. Run this command, replacing the placeholder with your
+workspace key:
+
+```bash
+claude mcp add qed-proof --env "QED_API_KEY=<your key>" -- npx -y @qed-proof/mcp
+```
+
+`QED_AGENT_ID` optionally sets the default agent ID for claims. `QED_API_URL` changes the API endpoint when using a
+self-hosted node; it defaults to `https://api.qedproof.site`. Offline receipt verification works without a key; the
+other tools need one.
+
+## Hosted server with Claude Code
+
+The hosted Streamable HTTP endpoint is `https://mcp.qedproof.site/mcp`. Add it with bearer authentication:
+
+```bash
+claude mcp add --transport http qed-proof https://mcp.qedproof.site/mcp \
+  --header "Authorization: Bearer <your key>"
+```
+
+The hosted server forwards the key to the API for each request. It keeps no application state; its logs include the
+method, tool name, status, and latency.
+
+## What the tools do
+
+`submit_claim` asks QED Proof to check a destination. `get_verdict` reads the claim's state and outcome;
+`get_receipt` returns the public receipt. `verify_receipt` checks a receipt offline, including its signature and log
+inclusion. It does not check an on-chain anchor, so that check remains unproven. The list tools return the claims and
+connected destinations available to the workspace.
+
+Only actions with a published verifier profile can receive a verified outcome. Other actions can be submitted, but
+will be decided as `unverifiable`. See [verdicts](/concepts/verdicts) and [connectors](/connectors/overview) for
+current verification coverage.
+
+See the [Python SDK](/sdks/python), [TypeScript SDK](/sdks/typescript), or [CLI](/cli), or read the
+[`@qed-proof/mcp` package instructions](https://www.npmjs.com/package/@qed-proof/mcp).

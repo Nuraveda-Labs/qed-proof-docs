@@ -27,7 +27,10 @@ index.mdx              landing page
 quickstart.mdx          first claim, end to end
 concepts/               claims, verdicts, receipts, the Merkle log, anchoring, trust levels, checking a receipt
 connectors/             GitHub, http.url.status, Meta, Slack, X, what's coming
-clients.mdx             what exists today for sending claims and checking receipts, and what's planned
+clients.mdx             client overview
+sdks/                   Python and TypeScript SDK install guides
+cli.mdx                 terminal client install guide
+mcp.mdx                 local and hosted MCP server setup
 alerts.mdx              Discord alerts
 pipelines.mdx           planned: user-defined proof
 self-hosting/           running your own node
@@ -46,5 +49,5 @@ docs.json               Mintlify navigation and site configuration
 ## Links
 
 - **[The app](https://qedproof.site/app)**
-- **[POAW](https://github.com/Nuraveda-Labs/POAW)** — the open protocol and self-hostable node these docs describe
+- **[qed-proof-core](https://github.com/Nuraveda-Labs/qed-proof-core)** — the open protocol and self-hostable node these docs describe
 - **[Discord](https://discord.gg/9yhJs3EdCx)**

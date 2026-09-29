@@ -1,0 +1,72 @@
+---
+title: Python SDK
+description: Install the QED Proof Python SDK, submit a claim, and verify its receipt.
+---
+
+The `qed-proof` package supports Python 3.11 and later. It submits claims to QED Proof and verifies receipts locally.
+
+## Install
+
+```bash
+pip install qed-proof
+```
+
+To check an on-chain anchor using a JSON-RPC endpoint, install the optional `anchor` extra:
+
+```bash
+pip install "qed-proof[anchor]"
+```
+
+## Create a key
+
+Sign in to the [QED Proof app](https://qedproof.site/app), open **Developers → API keys**, and create a workspace key.
+Save it securely when it is shown. The client reads `QED_PROOF_API_KEY` from the environment, or you can pass the key
+to `QedProof` explicitly.
+
+## Submit a claim
+
+Connect the destination first. This example checks a GitHub commit in a repository connected to your workspace:
+
+```python
+import os
+
+from qed_proof import QedProof, actions
+
+qp = QedProof(api_key=os.environ["QED_PROOF_API_KEY"])
+claim = qp.submit_claim(
+    actions.github_commit_push(
+        target="owner/repo",
+        sha="0123456789abcdef0123456789abcdef01234567",
+        branch="main",
+    ),
+    agent_id="my-agent",
+    client_claim_id="deploy-42",
+)
+result = qp.wait_for_verdict(claim.claim_id, timeout=120)
+print(result.verdict)
+
+receipt = qp.get_receipt(result.receipt_id)  # Public receipt; no API key is needed.
+```
+
+The first response can be queued while QED Proof checks the destination. `wait_for_verdict` polls until the claim is
+decided or the timeout expires. `client_claim_id` is an optional idempotency key: submitting the same ID again returns
+the same claim.
+
+## Verify a receipt
+
+Fetch the public keys once, then verify the receipt locally:
+
+```python
+from qed_proof import verify_receipt
+
+keys = qp.get_keys()
+report = verify_receipt(receipt, keys)
+print(report.valid, report.verdict, report.achieved_trust_level)
+```
+
+This checks the receipt's schema, signature, digest, and Merkle inclusion without an API request for the receipt. An
+on-chain anchor is reported as not checked unless you install the `anchor` extra and pass `rpc_url`, for example
+`https://sepolia.base.org` for Base Sepolia.
+
+`AsyncQedProof` offers the same client operations for async applications. See the
+[`qed-proof` package reference](https://pypi.org/project/qed-proof/) or the [HTTP API](/api-reference/introduction).

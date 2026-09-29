@@ -1,0 +1,62 @@
+---
+title: TypeScript SDK
+description: Install the QED Proof TypeScript SDK, submit a claim, and verify its receipt.
+---
+
+The `@qed-proof/sdk` package runs on Node.js 18 or later, Deno, and in browsers.
+
+## Install
+
+```bash
+npm install @qed-proof/sdk
+```
+
+## Create a key
+
+Sign in to the [QED Proof app](https://qedproof.site/app), open **Developers → API keys**, and create a workspace key.
+Keep the key private. In a server-side app, set `QED_PROOF_API_KEY` in the process environment; the client reads it
+automatically, or you can pass it when constructing `QedProof`.
+
+Do not put a workspace key in browser code. Browser applications can use the SDK's local receipt verification, but
+send claims from a trusted server that keeps the API key private.
+
+## Submit a claim
+
+Connect the destination first. This example checks a GitHub commit in a repository connected to your workspace:
+
+```ts
+import { QedProof, actions } from "@qed-proof/sdk";
+
+const qp = new QedProof({ apiKey: process.env.QED_PROOF_API_KEY });
+const claim = await qp.submitClaim(
+  actions.githubCommitPush({
+    target: "owner/repo",
+    sha: "0123456789abcdef0123456789abcdef01234567",
+    branch: "main",
+  }),
+  { agentId: "my-agent", clientClaimId: "deploy-42" },
+);
+const decided = await qp.waitForVerdict(claim.claim_id, { timeoutMs: 120_000 });
+const receipt = await qp.getReceipt(decided.receipt_id!); // Public receipt; no API key is needed.
+```
+
+The first response can be queued while QED Proof checks the destination. `waitForVerdict` polls until the claim is
+decided or the timeout expires. `clientClaimId` is an optional idempotency key: submitting the same ID again returns
+the same claim.
+
+## Verify a receipt
+
+The SDK verifies receipts locally. Pass the raw JSON text when available so the integers-only check can distinguish a
+written integer from a decimal such as `1.0`:
+
+```ts
+import { verifyReceipt } from "@qed-proof/sdk";
+
+const keys = await fetch("https://api.qedproof.site/.well-known/poaw-keys.json").then((r) => r.json());
+const report = await verifyReceipt(receipt, { keys });
+console.log(report.valid, report.verdict, report.achieved_trust_level);
+```
+
+This checks the receipt's schema, signature, digest, and Merkle inclusion without an API request for the receipt. The
+anchor is not checked unless you also provide an RPC URL. See the [`@qed-proof/sdk` package](https://www.npmjs.com/package/@qed-proof/sdk)
+or the [HTTP API](/api-reference/introduction).

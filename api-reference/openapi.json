@@ -152,6 +152,164 @@
       }
     },
     "/v1/claims": {
+      "get": {
+        "description": "This workspace's claims, newest first. Each item has the same shape as Get a claim. Pass the returned `next_cursor` as `cursor` for the next page (it's null on the last page). Filter by `agent_id`, `action`, `verdict` or `state` (`queued` | `decided`).",
+        "operationId": "list_claims_v1_claims_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "agent_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Agent Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "action",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Action"
+            }
+          },
+          {
+            "in": "query",
+            "name": "verdict",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Verdict"
+            }
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "State"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response List Claims V1 Claims Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Malformed cursor."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Missing or invalid API key."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Rate limit exceeded."
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "summary": "List claims"
+      },
       "post": {
         "description": "Tells QED Proof what an agent says it did. The claim is checked against the destination itself, inline when the destination answers quickly, otherwise by the next worker pass. Submitting the same `client_claim_id` again returns the existing claim (`created: false`) instead of a second one.",
         "operationId": "submit_v1_claims_post",
@@ -307,9 +465,65 @@
         "summary": "Get a claim"
       }
     },
+    "/v1/connections": {
+      "get": {
+        "description": "The destinations this workspace has connected read-only, and what QED Proof can verify through each: `actions` lists the verifier actions available for that connection's provider (an empty list means connected, but no verifier is live yet). `public_actions` need no connection. Active connections only, oldest first. To protect the connected accounts, no account names or IDs are returned; the console shows those to signed-in members. Connecting and disconnecting happen in the console.",
+        "operationId": "list_connections_v1_connections_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response List Connections V1 Connections Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Missing or invalid API key."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Rate limit exceeded."
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "summary": "List connections"
+      }
+    },
     "/v1/receipts/{receipt_id}": {
       "get": {
-        "description": "A signed receipt with its inclusion proof in the log (and the anchor, once the log root is anchored). Receipts are meant to be shared and checked by anyone, so this needs no API key. Reads are rate-limited per IP address.",
+        "description": "A signed receipt with its inclusion proof in the log (and the anchor, once the log root is anchored). Receipts are meant to be shared and checked by anyone, so this needs no API key. Reads are rate-limited per API key when a valid key is sent, otherwise per IP address.",
         "operationId": "receipt_v1_receipts__receipt_id__get",
         "parameters": [
           {
