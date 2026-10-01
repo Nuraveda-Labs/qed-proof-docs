@@ -17,7 +17,7 @@ part of a release commit rather than as your original commit. Your authorship is
 
 Every commit must carry a `Signed-off-by:` line (`git commit -s`), certifying the
 [Developer Certificate of Origin](https://developercertificate.org/) — the same requirement as the
-[qed-proof-core](https://github.com/Nuraveda-Labs/qed-proof-core) repository.
+[qed-proof-core](https://github.com/Nuraveda/qed-proof-core) repository.
 
 ## What we accept
 
@@ -42,5 +42,5 @@ npx mint@4.2.939 broken-links
 ## Security issues
 
 Please don't open an issue for a security problem here. Report it through the
-[qed-proof-core repository](https://github.com/Nuraveda-Labs/qed-proof-core)'s private vulnerability reporting instead — see its
+[qed-proof-core repository](https://github.com/Nuraveda/qed-proof-core)'s private vulnerability reporting instead — see its
 `SECURITY.md`.

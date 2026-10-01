@@ -58,5 +58,10 @@ console.log(report.valid, report.verdict, report.achieved_trust_level);
 ```
 
 This checks the receipt's schema, signature, digest, and Merkle inclusion without an API request for the receipt. The
-anchor is not checked unless you also provide an RPC URL. See the [`@qed-proof/sdk` package](https://www.npmjs.com/package/@qed-proof/sdk)
+anchor is not checked unless you also provide an RPC URL.
+
+`verifyReceipt` also verifies **change entries**, the log's record of a change nobody claimed (the report has
+`entry_kind: "change"` and no verdict). To check the `policy` on a receipt or change entry, pass the pipeline document:
+`verifyReceipt(receipt, { keys, pipeline })`. The report's `checks.policy` is then `true` or `false`, or `"not_checked"`
+when you give no document. See the [`@qed-proof/sdk` package](https://www.npmjs.com/package/@qed-proof/sdk)
 or the [HTTP API](/api-reference/introduction).

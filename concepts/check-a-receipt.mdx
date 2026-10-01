@@ -60,6 +60,22 @@ The tool prints a JSON report, for example:
 confirm — 2 requires both a verified inclusion proof and a verified on-chain anchor; without `--rpc`, the ceiling is
 1.
 
+## Change entries and policy
+
+The log holds a second kind of entry besides receipts: a **change entry**, recorded when something changed at a destination
+that no claim explained. It has no claim and no verdict, and it is signed under its own domain so it can never pass as a
+receipt. The same checker handles it; the report adds `"entry_kind": "change"` and has no `claim_digest` check.
+
+A receipt or change entry made by a pipeline carries a `policy`: the pipeline's id, version and digest. Give the checker the
+pipeline document and it confirms the digest, id and version match:
+
+```bash
+uv run spec/tools/check.py receipt.json keys.json --pipeline pipeline.json
+```
+
+The report then has `"policy": true` (or `false`, which makes the entry invalid). Without the document it reports
+`"policy": "not_checked"` and the entry stays valid on its other checks.
+
 ## In the browser
 
 <NotBuilt what="An in-browser receipt checker at qedproof.site/r/<receipt_id>" />

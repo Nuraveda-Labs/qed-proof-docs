@@ -19,7 +19,7 @@
   "favicon": "/favicon.png",
   "navbar": {
     "links": [
-      { "label": "Open source (qed-proof-core)", "href": "https://github.com/Nuraveda-Labs/qed-proof-core" }
+      { "label": "Open source (qed-proof-core)", "href": "https://github.com/Nuraveda/qed-proof-core" }
     ],
     "primary": { "type": "button", "label": "Open the app", "href": "https://qedproof.site/app" }
   },
@@ -99,7 +99,7 @@
   },
   "footer": {
     "socials": {
-      "github": "https://github.com/Nuraveda-Labs/qed-proof-core",
+      "github": "https://github.com/Nuraveda/qed-proof-core",
       "discord": "https://discord.gg/9yhJs3EdCx"
     }
   }

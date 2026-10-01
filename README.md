@@ -49,5 +49,5 @@ docs.json               Mintlify navigation and site configuration
 ## Links
 
 - **[The app](https://qedproof.site/app)**
-- **[qed-proof-core](https://github.com/Nuraveda-Labs/qed-proof-core)** — the open protocol and self-hostable node these docs describe
+- **[qed-proof-core](https://github.com/Nuraveda/qed-proof-core)** — the open protocol and self-hostable node these docs describe
 - **[Discord](https://discord.gg/9yhJs3EdCx)**

@@ -41,7 +41,8 @@ method, tool name, status, and latency.
 
 `submit_claim` asks QED Proof to check a destination. `get_verdict` reads the claim's state and outcome;
 `get_receipt` returns the public receipt. `verify_receipt` checks a receipt offline, including its signature and log
-inclusion. It does not check an on-chain anchor, so that check remains unproven. The list tools return the claims and
+inclusion. It also checks change entries (a change nobody claimed, recorded in the log), and with an optional `pipeline`
+document it checks the entry's `policy`. It does not check an on-chain anchor, so that check remains unproven. The list tools return the claims and
 connected destinations available to the workspace.
 
 Only actions with a published verifier profile can receive a verified outcome. Other actions can be submitted, but

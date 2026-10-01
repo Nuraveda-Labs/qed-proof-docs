@@ -68,5 +68,10 @@ This checks the receipt's schema, signature, digest, and Merkle inclusion withou
 on-chain anchor is reported as not checked unless you install the `anchor` extra and pass `rpc_url`, for example
 `https://sepolia.base.org` for Base Sepolia.
 
+`verify_receipt` also verifies **change entries**, the log's record of a change nobody claimed (the report has
+`entry_kind="change"` and no verdict). To check the `policy` on a receipt or change entry, pass the pipeline document:
+`verify_receipt(receipt, keys, pipeline=pipeline)`. The report's `policy` check is then `True` or `False`, or
+`"not_checked"` when you give no document.
+
 `AsyncQedProof` offers the same client operations for async applications. See the
 [`qed-proof` package reference](https://pypi.org/project/qed-proof/) or the [HTTP API](/api-reference/introduction).
