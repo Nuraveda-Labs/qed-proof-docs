@@ -30,7 +30,7 @@ connectors/             GitHub, http.url.status, Meta, Slack, X, what's coming
 clients.mdx             client overview
 sdks/                   Python and TypeScript SDK install guides
 cli.mdx                 terminal client install guide
-mcp.mdx                 local and hosted MCP server setup
+mcp-server.mdx          local and hosted MCP server setup (not mcp.mdx: /mcp is Mintlify's own docs-MCP endpoint)
 alerts.mdx              Discord alerts
 pipelines.mdx           planned: user-defined proof
 self-hosting/           running your own node

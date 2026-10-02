@@ -61,7 +61,7 @@
               "connectors/coming-soon"
             ]
           },
-          { "group": "Build", "pages": ["clients", "sdks/python", "sdks/typescript", "cli", "mcp", "alerts", "pipelines"] },
+          { "group": "Build", "pages": ["clients", "sdks/python", "sdks/typescript", "cli", "mcp-server", "alerts", "pipelines"] },
           {
             "group": "Self-hosting",
             "pages": ["self-hosting/overview", "self-hosting/docker-compose", "self-hosting/cli"]
