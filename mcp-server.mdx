@@ -37,6 +37,18 @@ claude mcp add --transport http qed-proof https://mcp.qedproof.site/mcp \
 The hosted server forwards the key to the API for each request. It keeps no application state; its logs include the
 method, tool name, status, and latency.
 
+## Other apps
+
+Any app that can add a remote MCP server by URL with a bearer header, or run a local stdio server, works the same way.
+The **Connect apps** page in the [QED Proof app](https://qedproof.site/app/connect/) has the exact steps for Claude Code,
+Claude Desktop, Cursor, VS Code, Windsurf, Gemini CLI, Codex CLI, Cline and Zed, with a key made for each app so you can
+revoke one without breaking the others.
+
+Two apps can't connect yet. **claude.ai** (web and mobile) and **ChatGPT** connect to a remote server with an OAuth
+sign-in, and QED Proof doesn't have one yet. ChatGPT has no field for an API key at all. claude.ai accepts a key only in
+organizations that are in Anthropic's request-headers beta. Until OAuth sign-in is added, use Claude Code, Claude Desktop
+or one of the editors above.
+
 ## What the tools do
 
 `submit_claim` asks QED Proof to check a destination. `get_verdict` reads the claim's state and outcome;
